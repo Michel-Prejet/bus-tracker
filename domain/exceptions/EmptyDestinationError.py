@@ -1,0 +1,2 @@
+class EmptyDestinationError(Exception):
+    pass

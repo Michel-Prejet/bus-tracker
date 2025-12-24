@@ -1,0 +1,2 @@
+class EmptyBlockNumberError(Exception):
+    pass

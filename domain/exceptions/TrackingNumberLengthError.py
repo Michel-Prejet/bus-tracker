@@ -1,0 +1,2 @@
+class TrackingNumberLengthError(Exception):
+    pass
