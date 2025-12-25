@@ -15,22 +15,22 @@ class Ride:
 
     TRACKING_NUMBER_LENGTH = 3
 
-    def __init__(self, ride_date, boarding_time, tracking_number, route, destination, block_number, notes):
+    def __init__(self, ride_date, boarding_time, route, tracking_number, destination, block_number, notes):
         """
         Creates a new instance of Ride.
 
         :param ride_date: the date of the ride to construct.
         :param boarding_time: the boarding time of the ride to construct.
-        :param tracking_number: the 3-digit tracking number of the bus that was ridden.
         :param route: the route that was taken.
+        :param tracking_number: the 3-digit tracking number of the bus that was ridden.
         :param destination: the destination of the route.
         :param block_number: the number of the block containing the bus's current trip.
         :param notes: any additional notes relevant to the ride (can be blank).
         """
         self.ride_date = ride_date
         self.boarding_time = boarding_time
-        self.tracking_number = tracking_number
         self.route = route
+        self.tracking_number = tracking_number
         self.destination = destination
         self.block_number = block_number
         self.notes = notes
@@ -38,15 +38,15 @@ class Ride:
         self._check_ride()
 
     @classmethod
-    def build(cls, ride_date, boarding_time, tracking_number, route, destination, block_number, notes):
+    def build(cls, ride_date, boarding_time, route, tracking_number, destination, block_number, notes):
         """
         Creates a new instance of Ride using the given arguments, or raises an exception if any of the
         arguments are invalid.
 
         :param ride_date: the date of the ride to construct.
         :param boarding_time: the boarding time of the ride to construct.
-        :param tracking_number: the 3-digit tracking number of the bus that was ridden.
         :param route: the route that was taken.
+        :param tracking_number: the 3-digit tracking number of the bus that was ridden.
         :param destination: the destination of the route.
         :param block_number: the number of the block containing the bus's current trip.
         :param notes: any additional notes relevant to the ride (can be blank).
@@ -54,8 +54,8 @@ class Ride:
         """
         require_not_none(ride_date,"Date should not be None.")
         require_not_none(boarding_time, "Boarding time should not be None.")
-        require_not_none(tracking_number, "Tracking number should not be None.")
         require_not_none(route, "Route should not be None.")
+        require_not_none(tracking_number, "Tracking number should not be None.")
         require_not_none(destination, "Destination should not be None.")
         require_not_none(block_number, "Block number should not be None.")
         require_not_none(notes, "Notes should not be None.")
@@ -68,14 +68,14 @@ class Ride:
         block_number = block_number.strip()
         notes = notes.strip()
 
+        if not route:
+            raise EmptyRouteError()
+
         if not tracking_number.isdigit():
             raise TrackingNumberDigitError()
 
         if len(tracking_number) != cls.TRACKING_NUMBER_LENGTH:
             raise TrackingNumberLengthError()
-
-        if not route:
-            raise EmptyRouteError()
 
         if not destination:
             raise EmptyDestinationError()
@@ -93,7 +93,7 @@ class Ride:
         if not 0 < block_number.find("-") < len(block_number) - 1:
             raise InvalidBlockNumberError()
 
-        return cls(ride_date, boarding_time, tracking_number, route, destination, block_number, notes)
+        return cls(ride_date, boarding_time, route, tracking_number, destination, block_number, notes)
 
     def __eq__(self, other):
         """
