@@ -1,2 +1,0 @@
-class InvalidTimeError(Exception):
-    pass

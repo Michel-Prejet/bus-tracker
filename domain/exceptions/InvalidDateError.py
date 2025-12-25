@@ -1,2 +1,0 @@
-class InvalidDateError(Exception):
-    pass

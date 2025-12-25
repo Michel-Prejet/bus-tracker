@@ -4,8 +4,6 @@ from domain.exceptions.EmptyRouteError import EmptyRouteError
 from domain.exceptions.InvalidBlockNumberError import InvalidBlockNumberError
 from domain.exceptions.TrackingNumberDigitError import TrackingNumberDigitError
 from domain.exceptions.TrackingNumberLengthError import TrackingNumberLengthError
-from domain.exceptions.InvalidDateError import InvalidDateError
-from domain.exceptions.InvalidTimeError import InvalidTimeError
 from utilities.InvariantHelper import require_not_none, require_state
 import datetime
 
@@ -61,18 +59,14 @@ class Ride:
         require_not_none(destination, "Destination should not be None.")
         require_not_none(block_number, "Block number should not be None.")
         require_not_none(notes, "Notes should not be None.")
+        require_state(isinstance(ride_date, datetime.date), "Ride date should be a date object.")
+        require_state(isinstance(boarding_time, datetime.time), "Boarding time should be a time object.")
 
         tracking_number = tracking_number.strip()
         route = route.strip()
         destination = destination.strip()
         block_number = block_number.strip()
         notes = notes.strip()
-
-        if not isinstance(ride_date, datetime.date):
-            raise InvalidDateError()
-
-        if not isinstance(boarding_time, datetime.time):
-            raise InvalidTimeError()
 
         if not tracking_number.isdigit():
             raise TrackingNumberDigitError()
