@@ -15,8 +15,8 @@ def print_ride_compact(ride):
     date_str = ride.ride_date.isoformat()
     time_str = ride.boarding_time.strftime("%H:%M")
 
-    _print_paragraph(f"Bus {ride.tracking_number} | {date_str} {time_str} | Route {ride.route} -> {ride.destination} "
-          f"| Block {ride.block_number}", 0)
+    print(f"Bus {ride.tracking_number} | {date_str} {time_str} | Route {ride.route} -> {ride.destination} "
+          f"| Block {ride.block_number}")
 
 def print_ride_detailed(ride, curr_route, curr_stop):
     """
