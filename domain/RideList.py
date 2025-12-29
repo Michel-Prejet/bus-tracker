@@ -43,6 +43,23 @@ class RideList:
 
         return None
 
+    def get_rides_on_bus(self, tracking_number):
+        """
+        Retrieves all rides from this ride list on a bus with a given tracking
+        number.
+
+        :param tracking_number: the 3-digit tracking number of the bus for which
+        to retrieve all rides.
+        :return: a list containing all rides on bus `tracking_number`.
+        """
+        rides_on_bus = []
+
+        for curr in self.rides:
+            if curr.tracking_number == tracking_number:
+                rides_on_bus.append(curr)
+
+        return rides_on_bus
+
     def remove_ride(self, date, time):
         """
         Removes a ride with a given date and boarding time from this ride list, or takes
