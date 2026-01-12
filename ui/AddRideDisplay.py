@@ -1,221 +1,177 @@
 from domain.Ride import Ride
-from datetime import date, time
+from domain.RideList import RideList
+from domain.validation.exceptions.RideError import (EmptyBlockNumberError, EmptyDestinationError, EmptyRouteError,
+                                                    InvalidBlockNumberError, TrackingNumberDigitError,
+                                                    TrackingNumberLengthError, RideError, InvalidDateError,
+                                                    InvalidTimeError)
 from ui.printing.RidePrinter import print_ride_compact
-
-from domain.exceptions.EmptyBlockNumberError import EmptyBlockNumberError
-from domain.exceptions.EmptyDestinationError import EmptyDestinationError
-from domain.exceptions.EmptyRouteError import EmptyRouteError
-from domain.exceptions.InvalidBlockNumberError import InvalidBlockNumberError
-from domain.exceptions.TrackingNumberDigitError import TrackingNumberDigitError
-from domain.exceptions.TrackingNumberLengthError import TrackingNumberLengthError
+from utilities.InvariantHelper import require_state
 from utilities.PrintHelper import print_error, print_success
+from domain.validation.ValidateRide import CURR_DATE_KEYWORD, validate_date, validate_boarding_time, validate_route, \
+    validate_tracking_number, validate_destination, validate_block_number
 
-CURR_DATE_KEYWORD = "today"
-SINGLE_DIGIT_HOUR_TIME_LENGTH = 4
+NUM_TOKENS_WITH_NOTES = 7
+NUM_TOKENS_WITHOUT_NOTES = 6
 
-def run_add_ride_regular(ride_list):
+def add_ride(ride_list: RideList) -> None:
     """
-    Creates a ride from user input and adds it to the given ride list. Prints error messages
-    and prompts the user again if any input is invalid.
+    Creates a ride from user input and adds it to the given ride list.
+    Repeatedly prompts the user for each field until they enter a valid
+    input.
 
-    :param ride_list: the ride list to add a ride to.
+    :param ride_list: the ride list to add the ride to.
     """
-    ride_date = _get_date_input()
-    boarding_time = _get_time_input()
-    route = _get_route_input()
-    tracking_number = _get_tracking_number_input()
-    destination = _get_destination_input()
-    block_number = _get_block_number_input()
-    notes = _get_notes_input()
 
-    while True:
-        try:
-            ride = Ride.build(ride_date,
-                              boarding_time,
-                              route,
-                              tracking_number,
-                              destination,
-                              block_number,
-                              notes)
+    ride_date = _prompter(f"Enter the date of the ride (YYYY-MM-DD or '{CURR_DATE_KEYWORD}'): ", validate_date)
+    boarding_time = _prompter("Enter boarding time (HH:MM): ", validate_boarding_time)
+    route = _prompter("Enter route (e.g. FX2): ", validate_route)
+    tracking_number = _prompter("Enter the bus's 3-digit tracking number (e.g. 971): ", validate_tracking_number)
+    destination = _prompter("Enter the route's destination (e.g. Markham Station): ", validate_destination)
+    block_number = _prompter("Enter the block ID (e.g. 171-7): ", validate_block_number)
+    notes = input("Enter any additional notes (can be blank): ")
 
-            _add_ride_and_print_messages(ride_list, ride, tracking_number)
-            break
-        except EmptyRouteError:
-            print_error("Route cannot be empty.")
-            route = _get_route_input()
-        except TrackingNumberLengthError:
-            print_error("Tracking number must contain exactly 3 characters.")
-            tracking_number = _get_tracking_number_input()
-        except TrackingNumberDigitError:
-            print_error("Tracking number can only contain digits.")
-            tracking_number = _get_tracking_number_input()
-        except EmptyDestinationError:
-            print_error("Destination cannot be empty.")
-            destination = _get_destination_input()
-        except EmptyBlockNumberError:
-            print_error("Block number cannot be empty.")
-            block_number = _get_block_number_input()
-        except InvalidBlockNumberError:
-            print_error("Block number can only contain digits and exactly one dash, which "
-                        "cannot be the first or last character.")
-            block_number = _get_block_number_input()
+    if ride_list.get_ride(ride_date, boarding_time):
+        print_error("A ride with this date and boarding time already exists.")
+    else:
+        ride_list.add_ride(Ride(
+            ride_date=ride_date,
+            boarding_time=boarding_time,
+            route=route,
+            tracking_number=tracking_number,
+            destination=destination,
+            block_number=block_number,
+            notes=notes
+        ))
+        print_success("Added ride.")
+        _display_previous_rides(ride_list, tracking_number)
 
-def run_add_ride_quick(ride_list):
+def add_rides_quick(ride_list: RideList) -> None:
     """
-    Creates rides in succession from single-line CSV input and adds them to the
-    given ride list until the user enters 'quit'. Prints error messages and
-    prompts the user again if any input is invalid.
+    Creates rides in succession from single-line CSV input and adds them
+    to the given ride list until the user enters 'quit'. Prints error
+    messages and prompts the user again if any inputs is invalid.
 
-    :param ride_list: the ride list to add a ride to.
+    :param ride_list: the ride list to add the ride to.
     """
-    quit_keyword = "quit"
-    num_tokens = 7
+    QUIT_KEYWORD = "quit"
 
-    print("*** Quick add mode ***\n" 
-          "Enter rides in the form YYYY-MM-DD, HH:MM, route, destination, tracking number, block ID, notes\n"
+    print("Enter ride information on one line as: YYYY-MM-DD, HH:MM, route, tracking number, destination, block ID, notes\n"
           f"Enter '{CURR_DATE_KEYWORD}' instead of YYYY-MM-DD for today's date.\n"
-          "Type 'quit' to exit quick add.")
+          f"Warning: duplicates (same date and boarding time) will be silently ignored.\n"
+          f"Type '{QUIT_KEYWORD}' to end session.")
 
     while True:
-        try:
-            ride_str = input("> ").strip()
+        csv_raw = input("> ").strip()
 
-            if ride_str.lower() == quit_keyword:
-                break
+        if csv_raw.lower() == QUIT_KEYWORD:
+            break
 
-            tokens = ride_str.split(",")
-            if len(tokens) != num_tokens:
-                print_error(f"There should be {num_tokens} tokens: YYYY-MM-DD, HH:MM, route, destination, "
-                            f"tracking number, block ID, notes")
-            else:
-                if tokens[0].strip().lower() == CURR_DATE_KEYWORD:
-                        ride_date = date.today()
-                else:
-                    ride_date = date.fromisoformat(tokens[0].strip())
+        tokens = csv_raw.split(",")
 
-                if len(tokens[1].strip()) == SINGLE_DIGIT_HOUR_TIME_LENGTH:
-                    boarding_time = time.fromisoformat("0" + tokens[1].strip())
-                else:
-                    boarding_time = time.fromisoformat(tokens[1].strip())
+        if len(tokens) not in [NUM_TOKENS_WITH_NOTES, NUM_TOKENS_WITHOUT_NOTES]:
+            print_error(f"There should be {NUM_TOKENS_WITHOUT_NOTES} or {NUM_TOKENS_WITH_NOTES} tokens: YYYY-MM-DD, HH:MM, "
+                        f"route, tracking number, destination, block ID, notes")
+        else:
+            try:
+                ride = _create_ride_from_tokens(tokens)
+                ride_list.add_ride(ride)
 
-                route = tokens[2].strip()
-                destination = tokens[3].strip()
-                tracking_number = tokens[4].strip()
-                block_number = tokens[5].strip()
-                notes = tokens[6].strip()
+                print_success("Added ride.")
+                _display_previous_rides(ride_list, ride.tracking_number)
+            except RideError as e:
+                _print_error_message(e)
 
-                ride = Ride.build(ride_date,
-                                  boarding_time,
-                                  route,
-                                  tracking_number,
-                                  destination,
-                                  block_number,
-                                  notes)
-
-                _add_ride_and_print_messages(ride_list, ride, tracking_number)
-        except ValueError:
-            print_error("Date and time should be in YYYY-MM-DD and HH:MM format, respectively.")
-        except EmptyRouteError:
-            print_error("Route cannot be empty.")
-        except TrackingNumberLengthError:
-            print_error("Tracking number must contain exactly 3 characters.")
-        except TrackingNumberDigitError:
-            print_error("Tracking number can only contain digits.")
-        except EmptyDestinationError:
-            print_error("Destination cannot be empty.")
-        except EmptyBlockNumberError:
-            print_error("Block number cannot be empty.")
-        except InvalidBlockNumberError:
-            print_error("Block number can only contain digits and exactly one dash, which "
-                        "cannot be the first or last character.")
-
-def _get_date_input():
+def _prompter(prompt: str, validator):
     """
-    Gets a date in YYYY-MM-DD from the user and creates a date object, printing an error
-    message and prompting the user again if their input is invalid.
+    Prompts the user and validates their input with the given function.
+    Continues prompting until the input is valid.
 
-    :return: the date object created from user input.
+    :param prompt: the prompt to display to the user.
+    :param validator: the function to validate user input.
+    :return: valid user input, or an object created from it.
     """
     while True:
         try:
-            date_str = input(f"Enter the date of the ride in YYYY-MM-DD format (or '{CURR_DATE_KEYWORD}'): ").strip()
+            raw = input(prompt)
+            return validator(raw)
+        except RideError as e:
+            _print_error_message(e)
 
-            if date_str.lower() == CURR_DATE_KEYWORD:
-                return date.today()
-
-            return date.fromisoformat(date_str)
-        except ValueError:
-            print_error(f"Date should be in YYYY-MM-DD format (or '{CURR_DATE_KEYWORD}').")
-
-def _get_time_input():
+def _print_error_message(error: RideError) -> None:
     """
-    Gets a boarding time in HH:MM from the user and creates a time object, printing an error
-    message and prompting the user again if their input is invalid.
+    Prints an error message corresponding to a given ride error.
 
-    :return: the time object created from user input.
+    :param error: the ride error for which to print an error message.
     """
-    while True:
-        try:
-            time_str = input("Enter the boarding time in HH:MM format: ").strip()
+    if isinstance(error, InvalidDateError):
+        print_error(f"Date should be in YYYY-MM-DD format (or '{CURR_DATE_KEYWORD}').")
+    elif isinstance(error, InvalidTimeError):
+        print_error("Time should be in HH:MM format.")
+    elif isinstance(error, EmptyRouteError):
+        print_error("Route cannot be empty.")
+    elif isinstance(error, TrackingNumberDigitError):
+        print_error("Tracking number can only contain digits.")
+    elif isinstance(error, TrackingNumberLengthError):
+        print_error("Tracking number must contain exactly 3 characters.")
+    elif isinstance(error, EmptyDestinationError):
+        print_error("Destination cannot be empty.")
+    elif isinstance(error, EmptyBlockNumberError):
+        print_error("Block number cannot be empty.")
+    elif isinstance(error, InvalidBlockNumberError):
+        print_error("Block number can only contain digits and exactly one dash, which "
+                    "cannot be the first or last character.")
+    else:
+        raise error
 
-            if len(time_str) == SINGLE_DIGIT_HOUR_TIME_LENGTH:
-                time_str = "0" + time_str
-
-            return time.fromisoformat(time_str)
-        except ValueError:
-            print_error("Time should be in HH:MM format.")
-
-def _get_route_input():
-    return input("Enter route (e.g. FX2): ")
-
-def _get_tracking_number_input():
-    return input("Enter the bus's 3-digit tracking number (e.g. 971): ")
-
-def _get_destination_input():
-    return input("Enter the route's destination (e.g. Markham Station): ")
-
-def _get_block_number_input():
-    return input("Enter the block ID (e.g. 171-7): ")
-
-def _get_notes_input():
-    return input("Enter any additional notes (can be blank): ")
-
-def _add_ride_and_print_messages(ride_list, ride, tracking_number):
+def _create_ride_from_tokens(tokens: list) -> Ride:
     """
-    Adds the given ride to the given list, prints a success message,
-    and prints all previous rides in `ride_list` on bus `tracking_number`.
+    Constructs and returns a ride based on a list of tokens. The
+    list should be of the form [YYYY-MM-DD, HH:MM, route,
+    tracking_number, destination, block_number, notes]. Raises
+    any exceptions caused by any invalid inputs.
 
-    :param ride_list: the ride list to which to add `ride`.
-    :param ride: the ride to add to `ride_list`.
-    :param tracking_number: the tracking number of the bus
-    for which to print previous rides.
+    :param tokens: a list containing the 7 tokens needed to construct
+    a ride (not necessarily all valid).
+    :return: the ride object constructed from `tokens`.
     """
-    print_success("Added ride.")
-    _display_previous_rides(ride_list, tracking_number)
-    ride_list.add_ride(ride)
+    require_state(len(tokens) in [NUM_TOKENS_WITH_NOTES, NUM_TOKENS_WITHOUT_NOTES],
+                  "There should be 6 or 7 tokens.")
 
-def _display_previous_rides(ride_list, tracking_number):
+    if len(tokens) == NUM_TOKENS_WITH_NOTES:
+        return Ride(
+            ride_date=validate_date(tokens[0]),
+            boarding_time=validate_boarding_time(tokens[1]),
+            route=validate_route(tokens[2]),
+            tracking_number=validate_tracking_number(tokens[3]),
+            destination=validate_destination(tokens[4]),
+            block_number=validate_block_number(tokens[5]),
+            notes=tokens[6]
+        )
+    elif len(tokens) == NUM_TOKENS_WITHOUT_NOTES:
+        return Ride(
+            ride_date=validate_date(tokens[0]),
+            boarding_time=validate_boarding_time(tokens[1]),
+            route=validate_route(tokens[2]),
+            tracking_number=validate_tracking_number(tokens[3]),
+            destination=validate_destination(tokens[4]),
+            block_number=validate_block_number(tokens[5]),
+            notes=""
+        )
+
+def _display_previous_rides(ride_list: RideList, tracking_number: str):
     """
-    Prints all rides in `ride_list` corresponding to `tracking_number`.
+    Prints all rides in `ride_list` corresponding to `tracking_number` if there
+    are at least two such rides.
 
-    :param ride_list: the ride list from which to print all rides on bus
-    `tracking_number`.
+    :param ride_list: the ride list from which to print all rides on the bus
+    with the given tracking number.
     :param tracking_number: the tracking number of the bus for which to
     print all rides.
     """
     prev_rides = ride_list.get_rides_on_bus(tracking_number)
 
-    if prev_rides:
-        if len(prev_rides) == 1:
-            print(f"\nYou have been on bus {tracking_number} one time:")
-        else:
-            print(f"\nYou have been on bus {tracking_number} {len(prev_rides)} times:")
+    if len(prev_rides) > 1:
+        print(f"\nYou have been on bus {tracking_number} {len(prev_rides)} times:")
 
         for curr in prev_rides:
             print_ride_compact(curr)
-
-
-
-
-
-

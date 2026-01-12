@@ -1,10 +1,12 @@
 import textwrap
 
+from domain.Ride import Ride
+
 LINE_WIDTH = 72
 INDENT_SPACES = 3
 SUB_INDENT_SPACES = 6
 
-def print_ride_compact(ride):
+def print_ride_compact(ride: Ride) -> None:
     """
     Prints a compact representation of a given ride. The tracking
     number, date/time, route, destination, and block number are printed
@@ -18,7 +20,7 @@ def print_ride_compact(ride):
     print(f"Bus {ride.tracking_number} | {date_str} {time_str} | Route {ride.route} -> {ride.destination} "
           f"| Block {ride.block_number}")
 
-def print_ride_detailed(ride, curr_route, curr_stop):
+def print_ride_detailed(ride: Ride, curr_route: str, curr_stop: str) -> None:
     """
     Prints a detailed representation of a given ride. The date/time, route,
     destination, block ID, tracking number, and additional notes are printed
@@ -47,7 +49,7 @@ def print_ride_detailed(ride, curr_route, curr_stop):
 
     _print_paragraph(ride.notes, SUB_INDENT_SPACES)
 
-def _print_paragraph(text, indentation):
+def _print_paragraph(text: str, indentation: int) -> None:
     """
     Prints a string in paragraph form. Adds a newline and a given number of
     spaces whenever the maximal line width (72) is reached.

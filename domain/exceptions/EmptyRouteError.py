@@ -1,2 +1,0 @@
-class EmptyRouteError(Exception):
-    pass

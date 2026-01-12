@@ -1,4 +1,4 @@
-def require_not_none(obj, message):
+def require_not_none(obj, message: str) -> None:
     """
     Raises a ValueError with a given error message if `obj` is None.
 
@@ -8,7 +8,7 @@ def require_not_none(obj, message):
     if obj is None:
         raise ValueError(message)
 
-def require_state(condition, message):
+def require_state(condition: bool, message: str) -> None:
     """
     Raises a ValueError with a given error message if `condition` is False.
 

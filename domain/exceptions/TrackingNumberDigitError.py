@@ -1,2 +1,0 @@
-class TrackingNumberDigitError(Exception):
-    pass

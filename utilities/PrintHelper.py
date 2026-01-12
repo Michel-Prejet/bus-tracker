@@ -4,7 +4,7 @@ RESET = "\033[0m"
 ERROR_PREFIX = "[ERROR] "
 SUCCESS_PREFIX = "[SUCCESS] "
 
-def print_error(message):
+def print_error(message: str) -> None:
     """
     Prints a given error message to the terminal in red, prefixed
     by [ERROR].
@@ -13,7 +13,7 @@ def print_error(message):
     """
     print_red(ERROR_PREFIX + message)
 
-def print_success(message):
+def print_success(message: str) -> None:
     """
     Prints a given success message to the terminal in green, prefixed
     by [SUCCESS].
@@ -22,9 +22,9 @@ def print_success(message):
     """
     print_green(SUCCESS_PREFIX + message)
 
-def print_red(text):
+def print_red(text: str) -> None:
     print(RED + text + RESET)
 
-def print_green(text):
+def print_green(text: str) -> None:
     print(GREEN + text + RESET)
 

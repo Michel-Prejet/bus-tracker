@@ -1,3 +1,5 @@
+from domain.Ride import Ride
+from datetime import date, time
 from utilities.InvariantHelper import require_not_none
 
 class RideList:
@@ -12,7 +14,7 @@ class RideList:
 
         self._check_ride_list()
 
-    def add_ride(self, ride):
+    def add_ride(self, ride: Ride) -> None:
         """
         Adds a given ride to this ride list, or takes no action if a ride with the same
         date/time already exists.
@@ -26,24 +28,24 @@ class RideList:
 
         self._check_ride_list()
 
-    def get_ride(self, date, time):
+    def get_ride(self, ride_date: date, boarding_time: time):
         """
         Retrieves a ride from this ride list with a given date and boarding time.
 
-        :param date: the date of the ride to retrieve.
-        :param time: the boarding time of the ride to retrieve.
+        :param ride_date: the date of the ride to retrieve.
+        :param boarding_time: the boarding time of the ride to retrieve.
         :return: the ride in this ride list corresponding to `date` and `time`, or `None` if no such ride exists.
         """
-        require_not_none(date, "Date should not be None.")
-        require_not_none(time, "Time should not be None.")
+        require_not_none(ride_date, "Date should not be None.")
+        require_not_none(boarding_time, "Time should not be None.")
 
         for curr in self.rides:
-            if curr.date == date and curr.boarding_time == time:
+            if curr.ride_date == ride_date and curr.boarding_time == boarding_time:
                 return curr
 
         return None
 
-    def get_rides_on_bus(self, tracking_number):
+    def get_rides_on_bus(self, tracking_number: str) -> list:
         """
         Retrieves all rides from this ride list on a bus with a given tracking
         number.
@@ -60,24 +62,24 @@ class RideList:
 
         return rides_on_bus
 
-    def remove_ride(self, date, time):
+    def remove_ride(self, ride_date: date, boarding_time: time) -> None:
         """
         Removes a ride with a given date and boarding time from this ride list, or takes
         no action if no such ride exists.
 
-        :param date: the date of the ride to remove.
-        :param time: the boarding time of the ride to remove.
+        :param ride_date: the date of the ride to remove.
+        :param boarding_time: the boarding time of the ride to remove.
         """
-        require_not_none(date, "Date should not be None.")
-        require_not_none(time, "Time should not be None.")
+        require_not_none(ride_date, "Date should not be None.")
+        require_not_none(boarding_time, "Time should not be None.")
 
-        ride = self.get_ride(date, time)
+        ride = self.get_ride(ride_date, boarding_time)
         if ride is not None:
             self.rides.remove(ride)
 
         self._check_ride_list()
 
-    def _check_ride_list(self):
+    def _check_ride_list(self) -> None:
         require_not_none(self.rides, "Ride list should not be None.")
         for ride in self.rides:
             require_not_none(ride, "Ride in ride list should not be None.")
