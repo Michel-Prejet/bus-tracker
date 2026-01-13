@@ -33,13 +33,13 @@ class Ride:
         require_state(isinstance(ride_date, date), "Ride date should be a date object.")
         require_state(isinstance(boarding_time, time), "Boarding time should be a time object.")
 
-        self.ride_date = ride_date
-        self.boarding_time = boarding_time
-        self.route = route
-        self.tracking_number = tracking_number
-        self.destination = destination
-        self.block_number = block_number
-        self.notes = notes
+        self.ride_date: date = ride_date
+        self.boarding_time: time = boarding_time
+        self.route: str = route
+        self.tracking_number: str = tracking_number
+        self.destination: str = destination
+        self.block_number: str = block_number
+        self.notes: str = notes
 
         self._check_ride()
 

@@ -14,8 +14,8 @@ def print_ride_compact(ride: Ride) -> None:
 
     :param ride: the ride to print.
     """
-    date_str = ride.ride_date.isoformat()
-    time_str = ride.boarding_time.strftime("%H:%M")
+    date_str: str = ride.ride_date.isoformat()
+    time_str: str = ride.boarding_time.strftime("%H:%M")
 
     print(f"Bus {ride.tracking_number} | {date_str} {time_str} | Route {ride.route} -> {ride.destination} "
           f"| Block {ride.block_number}")
@@ -30,11 +30,11 @@ def print_ride_detailed(ride: Ride, curr_route: str, curr_stop: str) -> None:
     :param curr_route: the current route being served by the bus ridden in `ride`.
     :param curr_stop: the current stop being served by the bus ridden in `ride`.
     """
-    indent = INDENT_SPACES * " "
-    sub_indent = SUB_INDENT_SPACES * " "
+    indent: str = INDENT_SPACES * " "
+    sub_indent: str = SUB_INDENT_SPACES * " "
 
-    date_str = ride.ride_date.strftime("%B %d, %Y")
-    time_str = ride.boarding_time.strftime("%I:%M %p")
+    date_str: str = ride.ride_date.strftime("%B %d, %Y")
+    time_str: str = ride.boarding_time.strftime("%I:%M %p")
 
     print(
     f"Ride on {date_str} at {time_str}\n"

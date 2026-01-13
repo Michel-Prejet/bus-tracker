@@ -66,14 +66,14 @@ def add_rides_quick(ride_list: RideList) -> None:
         if csv_raw.lower() == QUIT_KEYWORD:
             break
 
-        tokens = csv_raw.split(",")
+        tokens: list[str] = csv_raw.split(",")
 
         if len(tokens) not in [NUM_TOKENS_WITH_NOTES, NUM_TOKENS_WITHOUT_NOTES]:
             print_error(f"There should be {NUM_TOKENS_WITHOUT_NOTES} or {NUM_TOKENS_WITH_NOTES} tokens: YYYY-MM-DD, HH:MM, "
                         f"route, tracking number, destination, block ID, notes")
         else:
             try:
-                ride = _create_ride_from_tokens(tokens)
+                ride: Ride = _create_ride_from_tokens(tokens)
                 ride_list.add_ride(ride)
 
                 print_success("Added ride.")
@@ -92,7 +92,7 @@ def _prompter(prompt: str, validator):
     """
     while True:
         try:
-            raw = input(prompt)
+            raw: str = input(prompt)
             return validator(raw)
         except RideError as e:
             _print_error_message(e)
@@ -168,7 +168,7 @@ def _display_previous_rides(ride_list: RideList, tracking_number: str):
     :param tracking_number: the tracking number of the bus for which to
     print all rides.
     """
-    prev_rides = ride_list.get_rides_on_bus(tracking_number)
+    prev_rides: list[Ride] = ride_list.get_rides_on_bus(tracking_number)
 
     if len(prev_rides) > 1:
         print(f"\nYou have been on bus {tracking_number} {len(prev_rides)} times:")

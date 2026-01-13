@@ -10,9 +10,12 @@ class RideList:
         """
         Creates a new instance of RideList with an empty list of rides.
         """
-        self.rides = []
+        self._rides: list[Ride] = []
 
         self._check_ride_list()
+
+    def __iter__(self):
+        return iter(self._rides)
 
     def add_ride(self, ride: Ride) -> None:
         """
@@ -23,8 +26,8 @@ class RideList:
         """
         require_not_none(ride, "Ride should not be None.")
 
-        if not ride in self.rides:
-            self.rides.append(ride)
+        if not ride in self._rides:
+            self._rides.append(ride)
 
         self._check_ride_list()
 
@@ -39,13 +42,13 @@ class RideList:
         require_not_none(ride_date, "Date should not be None.")
         require_not_none(boarding_time, "Time should not be None.")
 
-        for curr in self.rides:
+        for curr in self._rides:
             if curr.ride_date == ride_date and curr.boarding_time == boarding_time:
                 return curr
 
         return None
 
-    def get_rides_on_bus(self, tracking_number: str) -> list:
+    def get_rides_on_bus(self, tracking_number: str) -> list[Ride]:
         """
         Retrieves all rides from this ride list on a bus with a given tracking
         number.
@@ -56,7 +59,7 @@ class RideList:
         """
         rides_on_bus = []
 
-        for curr in self.rides:
+        for curr in self._rides:
             if curr.tracking_number == tracking_number:
                 rides_on_bus.append(curr)
 
@@ -73,14 +76,14 @@ class RideList:
         require_not_none(ride_date, "Date should not be None.")
         require_not_none(boarding_time, "Time should not be None.")
 
-        ride = self.get_ride(ride_date, boarding_time)
+        ride: Ride = self.get_ride(ride_date, boarding_time)
         if ride is not None:
-            self.rides.remove(ride)
+            self._rides.remove(ride)
 
         self._check_ride_list()
 
     def _check_ride_list(self) -> None:
-        require_not_none(self.rides, "Ride list should not be None.")
-        for ride in self.rides:
+        require_not_none(self._rides, "Ride list should not be None.")
+        for ride in self._rides:
             require_not_none(ride, "Ride in ride list should not be None.")
 
