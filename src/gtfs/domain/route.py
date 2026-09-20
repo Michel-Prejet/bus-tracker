@@ -54,14 +54,27 @@ class Route:
 
     @property
     def id(self) -> str:
+        """
+        Returns the internal ID used to reference this route within the GTFS.
+        """
         return self._route_id
 
     @property
     def short_name(self) -> str | None:
+        """
+        Returns the short name used to refer to this route in a passenger-facing
+        context, or None if no such attribute has been defined.
+        In Winnipeg Transit's GTFS, this is usually the same thing as the route
+        number (e.g. BLUE, FX2, 679).
+        """
         return self._short_name
 
     @property
     def long_name(self) -> str | None:
+        """
+        Returns a longer, descriptive name for this route (e.g.
+        Kenaston - Keewatin), or None if no such attribute has been defined.
+        """
         return self._long_name
 
     @property
@@ -82,6 +95,10 @@ class Route:
 
     @property
     def sort_order(self) -> int | None:
+        """
+        Returns the suggested index for this route when displaying as part
+        of a passenger-facing list.
+        """
         return self._sort_order
 
     def _check_route(self) -> None:
