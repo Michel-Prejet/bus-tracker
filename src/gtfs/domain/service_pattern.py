@@ -15,6 +15,9 @@ class ServicePattern:
     and the date range for which it is valid. Takes into account any service
     pattern overrides (for example, on holidays) which can either add or remove
     this service pattern on a specific day.
+
+    Important GTFS invariants for this object:
+    * Each date can be associated with at most one service pattern override.
     """
 
     def __init__(

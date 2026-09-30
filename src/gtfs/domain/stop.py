@@ -7,12 +7,6 @@ class Stop:
     """
     Represents a stop read from the GTFS with an ID, a stop code, a name,
     coordinates, and a URL.
-
-    The official GTFS invariants for this object are as follows:
-    * The ID cannot be None or empty.
-    * If the stop code is not None, it cannot be empty.
-    * The stop name cannot be None or empty.
-    * The coordinates cannot be None.
     """
 
     def __init__(

@@ -12,11 +12,9 @@ class Route:
     Represents a route read from the GTFS with an ID, a short and long name,
     a type, a URL, background and text colours, and a sort order.
 
-    The official GTFS invariants for this object are as follows:
-    * The ID cannot be None or empty.
+    Important GTFS invariants for this object:
     * The short and long names cannot both be None, and whichever names are
       present cannot be empty.
-    * The route type cannot be None.
     * If the background colour is None, it is set to the default value of FFFFFF.
     * If the text colour is None, it is set to the default value of 000000.
     * If the sort order is not None, it must be non-negative.
