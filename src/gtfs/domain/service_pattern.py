@@ -24,12 +24,12 @@ class ServicePattern:
             self,
             service_id: str,
             weekdays_active: set[DayOfWeek],
-            active_period: DateRange,
-            overrides: dict[date, ServicePatternOverride]):
+            active_period: DateRange
+        ):
         self._service_id = service_id
         self._weekdays_active = weekdays_active
         self._active_period = active_period
-        self._overrides = overrides
+        self._overrides: dict[date, ServicePatternOverride] = {}
 
         self._check_service_pattern()
 
@@ -60,6 +60,20 @@ class ServicePattern:
             service_date in self._active_period and
             DayOfWeek.from_date(service_date) in self._weekdays_active
         )
+
+    def add_override(self, override: ServicePatternOverride) -> None:
+        """
+        Adds a given override/exception for this service pattern.
+        Assumes that no override has already been assigned to the same date
+        as that of the given service pattern override.
+        """
+        require_not_none(service_pattern_override=override)
+        require_state(
+            override.date not in self._overrides,
+            "There cannot be two overrides on the same date for this service pattern."
+        )
+
+        self._overrides[override.date] = override
 
     def _check_service_pattern(self) -> None:
         require_not_none(
