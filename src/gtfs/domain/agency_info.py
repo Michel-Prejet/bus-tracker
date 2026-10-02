@@ -1,4 +1,6 @@
 from zoneinfo import ZoneInfo
+from gtfs.domain.values.email import Email
+from gtfs.domain.values.language import Language
 from gtfs.domain.values.url import Url
 from utilities.invariant_helper import require_not_none, require_non_empty_str
 
@@ -16,9 +18,9 @@ class AgencyInfo:
             agency_url: Url,
             fare_url: Url | None,
             timezone: ZoneInfo,
-            language: str | None,
+            language: Language | None,
             phone_num: str | None,
-            email: str | None
+            email: Email | None
     ):
         self._agency_id = agency_id
         self._name = name
@@ -52,7 +54,7 @@ class AgencyInfo:
         return self._timezone
 
     @property
-    def language(self) -> str | None:
+    def language(self) -> Language | None:
         return self._language
 
     @property
@@ -60,7 +62,7 @@ class AgencyInfo:
         return self._phone_num
 
     @property
-    def email(self) -> str | None:
+    def email(self) -> Email | None:
         return self._email
 
     def _check_agency_info(self) -> None:
@@ -75,11 +77,5 @@ class AgencyInfo:
 
         require_non_empty_str(agency_name=self._name)
 
-        if self._language is not None:
-            require_non_empty_str(agency_language=self._language)
-
         if self._phone_num is not None:
             require_non_empty_str(agency_phone_number=self._phone_num)
-
-        if self._email is not None:
-            require_non_empty_str(agency_email_address=self._email)
