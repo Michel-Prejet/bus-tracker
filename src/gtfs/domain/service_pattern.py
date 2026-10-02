@@ -75,6 +75,8 @@ class ServicePattern:
 
         self._overrides[override.date] = override
 
+        self._check_service_pattern()
+
     def _check_service_pattern(self) -> None:
         require_not_none(
             service_id=self._service_id,
