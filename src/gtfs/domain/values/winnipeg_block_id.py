@@ -43,6 +43,10 @@ class WinnipegBlockID:
             other._number == self._number
         )
 
+    @property
+    def service_id(self) -> str:
+        return self._service_id
+
     def gtfs_format(self) -> str:
         """
         Returns the full block ID in the form

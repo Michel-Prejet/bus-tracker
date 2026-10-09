@@ -1,4 +1,4 @@
-from gtfs.domain.shape_point import ShapePoint
+from gtfs.domain.shape.shape_point import ShapePoint
 from utilities.invariant_helper import require_not_none, require_state, require_non_empty_str
 from bisect import insort
 

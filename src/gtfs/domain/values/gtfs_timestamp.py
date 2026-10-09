@@ -39,6 +39,16 @@ class GTFSTimestamp:
 
         self._check_gtfs_timestamp()
 
+    def __lt__(self, other: "GTFSTimestamp") -> bool:
+        """
+        Returns True if this GTFS timestamp occurs before the given instance
+        (when converted to a regular datetime); returns False otherwise.
+        """
+        require_not_none(gtfs_timestamp_to_compare=other)
+
+        return (self.as_datetime().astimezone(timezone.utc)
+                < other.as_datetime().astimezone(timezone.utc))
+
     @property
     def service_date(self) -> date:
         return self._service_date
