@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class ServicePatternOverrideType(Enum):
+class ServicePatternOverrideType(IntEnum):
     """
     Represents different types of instructions for modifying service
     patterns on a specific date.

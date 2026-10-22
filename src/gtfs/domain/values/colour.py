@@ -1,6 +1,7 @@
 from utilities.invariant_helper import require_not_none, require_state
 from gtfs.gtfs_constants import HEX_COLOUR_LENGTH, HEX_COLOUR_BASE, HEX_COLOUR_RED_SLICE, HEX_COLOUR_GREEN_SLICE, \
     HEX_COLOUR_BLUE_SLICE, HEX_PRIMARY_COLOUR_LENGTH
+from utilities.is_hex import is_hex
 
 
 class Colour:
@@ -16,7 +17,7 @@ class Colour:
             f"Colour string should have exactly {HEX_COLOUR_LENGTH} characters."
         )
         require_state(
-            self._is_hex(colour),
+            is_hex(colour),
             "Colour string should be a hexadecimal string."
         )
 
@@ -66,7 +67,7 @@ class Colour:
             f"Red hexadecimal value should contain exactly {HEX_PRIMARY_COLOUR_LENGTH} characters."
         )
         require_state(
-            self._is_hex(self._hex_red),
+            is_hex(self._hex_red),
             f"Red hexadecimal string should only contain hexadecimal characters."
         )
 
@@ -75,7 +76,7 @@ class Colour:
             f"Green hexadecimal value should contain exactly {HEX_PRIMARY_COLOUR_LENGTH} characters."
         )
         require_state(
-            self._is_hex(self._hex_green),
+            is_hex(self._hex_green),
             f"Green hexadecimal string should only contain hexadecimal characters."
         )
 
@@ -84,18 +85,6 @@ class Colour:
             f"Blue hexadecimal value should contain exactly {HEX_PRIMARY_COLOUR_LENGTH} characters."
         )
         require_state(
-            self._is_hex(self._hex_blue),
+            is_hex(self._hex_blue),
             f"Blue hexadecimal string should only contain hexadecimal characters."
         )
-
-    @staticmethod
-    def _is_hex(colour: str) -> bool:
-        """
-        Returns True if the trimmed string only consists of hexadecimal characters,
-        returns False otherwise.
-        """
-        try:
-            int(colour, HEX_COLOUR_BASE)
-            return True
-        except ValueError:
-            return False
