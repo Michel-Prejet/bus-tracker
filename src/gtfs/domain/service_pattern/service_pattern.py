@@ -4,7 +4,7 @@ from gtfs.domain.enums.service_pattern_override_type import ServicePatternOverri
 from gtfs.domain.service_pattern.service_pattern_override import ServicePatternOverride
 from gtfs.domain.values.date_range import DateRange
 from gtfs.domain.values.gtfs_timestamp import GTFSTimestamp
-from utilities.invariant_helper import require_not_none, require_non_empty_str, require_state
+from invariant_helper import require_not_none, require_non_empty_str, require_state
 
 
 class ServicePattern:

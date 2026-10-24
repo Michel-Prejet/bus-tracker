@@ -1,14 +1,16 @@
+from gtfs.constants.csv_column_headers.route_headers import ROUTE_ID_COL_HEADER, ROUTE_TYPE_COL_HEADER, \
+    ROUTE_URL_COL_HEADER, ROUTE_BACKGROUND_COLOUR_COL_HEADER, ROUTE_TEXT_COLOUR_COL_HEADER, ROUTE_SORT_ORDER_COL_HEADER
 from gtfs.domain.enums.route_types import RouteType
 from gtfs.domain.route import Route
 from gtfs.domain.values.colour import Colour
 from gtfs.domain.values.url import Url
-from gtfs.validation.domain.general_validator import validate_and_parse_url, validate_and_parse_colour, \
+from gtfs.exceptions.gtfs_attribute_error import GTFSAttributeError
+from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
+from gtfs.exceptions.gtfs_instance_error import GTFSInstanceError
+from gtfs.constants.gtfs_constants import ROUTES_FILE_NAME
+from gtfs.validation.general_validator import validate_and_parse_url, validate_and_parse_colour, \
     validate_and_parse_numeric_str, validate_and_parse_optional_str
-from utilities.invariant_helper import require_not_none, require_state
-from gtfs.exceptions.domain_validation.route_error import EmptyRouteIdError, InvalidRouteTypeError, \
-    InvalidRouteUrlError, \
-    InvalidRouteBackgroundColourError, InvalidRouteTextColourError, InvalidRouteSortOrderError, MissingRouteNameError, \
-    DuplicateRouteIdError
+from invariant_helper import require_not_none, require_state
 
 
 def validate_route_collection(routes: list[Route]) -> None:
@@ -24,20 +26,21 @@ def validate_route_collection(routes: list[Route]) -> None:
 
     for route in routes:
         if route.id in ids_seen:
-            raise DuplicateRouteIdError(route.id)
+            raise GTFSCollectionError(ROUTES_FILE_NAME, [ROUTE_ID_COL_HEADER])
         ids_seen.add(route.id)
 
 def validate_route_attribute_combination(short_name: str | None,
                                          long_name: str | None,
+                                         row: str,
                                          row_num: int) -> None:
     """
     Throws an exception if both of the given route names are None.
     """
-    require_not_none(row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_not_none(row=row, row_number=row_num)
+    require_state(row_num >= 1, "Row number should be positive.")
 
     if short_name is None and long_name is None:
-        raise MissingRouteNameError(row_num)
+        raise GTFSInstanceError(ROUTES_FILE_NAME, row, row_num)
 
 def validate_and_parse_route_id(raw: str, row_num: int) -> str:
     """
@@ -45,22 +48,23 @@ def validate_and_parse_route_id(raw: str, row_num: int) -> str:
     Otherwise, the trimmed string is returned.
     """
     require_not_none(raw_route_id=raw, row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     raw = raw.strip()
 
     if len(raw) == 0:
-        raise EmptyRouteIdError(row_num)
+        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_ID_COL_HEADER,
+                                 row_num, raw)
 
     return raw
 
-def validate_and_parse_route_name(raw: str, row_num: int) -> str:
+def validate_and_parse_route_name(raw: str, row_num: int) -> str | None:
     """
     Returns None if the given string is empty or only whitespace; otherwise
     returns the trimmed string.
     """
     require_not_none(raw_short_name=raw, row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     return validate_and_parse_optional_str(raw)
 
@@ -71,12 +75,12 @@ def validate_and_parse_route_type(raw: str, row_num: int) -> RouteType:
     returned.
     """
     require_not_none(raw_route_type=raw, row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     try:
         return RouteType(validate_and_parse_numeric_str(raw))
     except ValueError as e:
-        raise InvalidRouteTypeError(row_num) from e
+        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_TYPE_COL_HEADER, row_num, raw) from e
 
 def validate_and_parse_route_url(raw: str, row_num: int) -> Url | None:
     """
@@ -84,12 +88,12 @@ def validate_and_parse_route_url(raw: str, row_num: int) -> Url | None:
     returns the corresponding Url object.
     """
     require_not_none(raw_route_url=raw, row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     try:
         return validate_and_parse_url(raw)
     except ValueError as e:
-        raise InvalidRouteUrlError(row_num) from e
+        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_URL_COL_HEADER, row_num, raw) from e
 
 def validate_and_parse_route_background_colour(raw: str, row_num: int) -> Colour | None:
     """
@@ -98,12 +102,13 @@ def validate_and_parse_route_background_colour(raw: str, row_num: int) -> Colour
     given string is not a 6-character hexadecimal string.
     """
     require_not_none(raw_route_background_colour=raw, row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     try:
         return validate_and_parse_colour(raw)
     except ValueError as e:
-        raise InvalidRouteBackgroundColourError(row_num) from e
+        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_BACKGROUND_COLOUR_COL_HEADER,
+                                 row_num, raw) from e
 
 def validate_and_parse_route_text_colour(raw: str, row_num: int) -> Colour | None:
     """
@@ -112,12 +117,13 @@ def validate_and_parse_route_text_colour(raw: str, row_num: int) -> Colour | Non
     given string is not a 6-character hexadecimal string.
     """
     require_not_none(raw_route_text_colour=raw, row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     try:
         return validate_and_parse_colour(raw)
     except ValueError as e:
-        raise InvalidRouteTextColourError(row_num) from e
+        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_TEXT_COLOUR_COL_HEADER,
+                                 row_num, raw) from e
 
 def validate_and_parse_route_sort_order(raw: str, row_num: int) -> int | None:
     """
@@ -126,7 +132,7 @@ def validate_and_parse_route_sort_order(raw: str, row_num: int) -> int | None:
     is not a non-negative integer.
     """
     require_not_none(raw_route_sort_order=raw, row_number=row_num)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     raw = raw.strip()
 
@@ -136,9 +142,11 @@ def validate_and_parse_route_sort_order(raw: str, row_num: int) -> int | None:
     try:
         sort_order = validate_and_parse_numeric_str(raw)
     except ValueError as e:
-        raise InvalidRouteSortOrderError(row_num) from e
+        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_SORT_ORDER_COL_HEADER,
+                                 row_num, raw) from e
 
     if sort_order < 0:
-        raise InvalidRouteSortOrderError(row_num)
+        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_SORT_ORDER_COL_HEADER,
+                                 row_num, raw)
 
     return sort_order

@@ -2,8 +2,8 @@ from gtfs.domain.route import Route
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.shape.shape import Shape
 from gtfs.domain.values.winnipeg_block_id import WinnipegBlockID
-from gtfs.gtfs_constants import TRIP_DIRECTION_VALUES
-from utilities.invariant_helper import require_not_none, require_state, require_non_empty_str
+from gtfs.constants.gtfs_constants import TRIP_DIRECTION_VALUES
+from invariant_helper import require_not_none, require_state, require_non_empty_str
 from gtfs.domain.trip.stop_visit import StopVisit
 from bisect import insort
 

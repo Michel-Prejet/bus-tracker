@@ -1,20 +1,14 @@
+from gtfs.constants.csv_column_headers.route_headers import ROUTE_ID_COL_HEADER, ROUTE_SHORT_NAME_COL_HEADER, \
+    ROUTE_LONG_NAME_COL_HEADER, ROUTE_TYPE_COL_HEADER, ROUTE_URL_COL_HEADER, ROUTE_BACKGROUND_COLOUR_COL_HEADER, \
+    ROUTE_TEXT_COLOUR_COL_HEADER, ROUTE_SORT_ORDER_COL_HEADER
 from gtfs.csv_parsing.csv_parsing_helper import get_opt_attribute, parse_gtfs_file
 from gtfs.domain.route import Route
-from gtfs.validation.domain.route_validator import validate_and_parse_route_id, validate_and_parse_route_type, \
+from gtfs.utilities.dict_reader_row_to_csv import dict_reader_row_to_csv
+from gtfs.validation.route_validator import validate_and_parse_route_id, validate_and_parse_route_type, \
     validate_and_parse_route_url, validate_and_parse_route_background_colour, validate_and_parse_route_text_colour, \
     validate_and_parse_route_sort_order, validate_route_attribute_combination, validate_route_collection, \
     validate_and_parse_route_name
-from utilities.invariant_helper import require_not_none, require_state
-
-
-ROUTE_ID_COL_HEADER = "route_id"
-ROUTE_SHORT_NAME_COL_HEADER = "route_short_name"
-ROUTE_LONG_NAME_COL_HEADER = "route_long_name"
-ROUTE_TYPE_COL_HEADER = "route_type"
-ROUTE_URL_COL_HEADER = "route_url"
-ROUTE_BACKGROUND_COLOUR_COL_HEADER = "route_color"
-ROUTE_TEXT_COLOUR_COL_HEADER = "route_text_color"
-ROUTE_SORT_ORDER_COL_HEADER = "route_sort_order"
+from invariant_helper import require_not_none, require_state
 
 ROUTE_REQUIRED_COLUMNS = [
     ROUTE_ID_COL_HEADER,
@@ -86,7 +80,8 @@ def _create_route_from_row(row: dict[str, str], row_num: int) -> Route:
         validator=validate_and_parse_route_sort_order
     )
 
-    validate_route_attribute_combination(short_name, long_name, row_num)
+    validate_route_attribute_combination(short_name, long_name,
+                                         dict_reader_row_to_csv(row), row_num)
     return Route(
         route_id=route_id,
         short_name=short_name,

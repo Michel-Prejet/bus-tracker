@@ -3,8 +3,8 @@ from gtfs.domain.values.date_range import DateRange
 from gtfs.domain.values.email import Email
 from gtfs.domain.values.language import Language
 from gtfs.domain.values.url import Url
-from gtfs.gtfs_constants import UNBOUNDED_START_DATE, UNBOUNDED_END_DATE
-from utilities.invariant_helper import require_not_none, require_non_empty_str
+from gtfs.constants.gtfs_constants import UNBOUNDED_START_DATE, UNBOUNDED_END_DATE
+from invariant_helper import require_not_none, require_non_empty_str
 
 
 class FeedInfo:

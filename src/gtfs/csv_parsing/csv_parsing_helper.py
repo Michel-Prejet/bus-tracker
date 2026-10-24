@@ -1,7 +1,7 @@
-from typing import Callable, Any
-from gtfs.exceptions.csv_parsing.gtfs_file_error import MissingGTFSTokenError
+from typing import Callable
+from gtfs.exceptions.gtfs_file_error import MissingGTFSTokenError
 from gtfs.validation.gtfs_file_opener import GTFSFileOpener
-from utilities.invariant_helper import require_not_none, require_non_empty_str, require_state
+from invariant_helper import require_not_none, require_non_empty_str, require_state
 
 
 def parse_gtfs_file[T](
@@ -38,12 +38,12 @@ def parse_gtfs_file[T](
 
         return objects
 
-def get_opt_attribute(
+def get_opt_attribute[T](
         column_name: str,
         row: dict[str, str],
         row_num: int,
-        validator: Callable
-) -> Any:
+        validator: Callable[[str, int], T]
+) -> T | None:
     """
     Returns the parsed attribute in the given column of the given row,
     or None if the column doesn't exist. Exceptions may be thrown on
@@ -56,7 +56,7 @@ def get_opt_attribute(
         validator=validator
     )
     require_non_empty_str(column_name=column_name)
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_state(row_num >= 1, "Row number should be positive.")
 
     token_raw = row.get(column_name)
 

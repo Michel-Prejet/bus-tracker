@@ -1,6 +1,6 @@
-from gtfs.gtfs_constants import WPG_BLOCK_ID_TOKEN_DELIMITER, WPG_BLOCK_ID_NUM_TOKENS, WPG_BLOCK_ID_SERVICE_ID_TOKEN_INDEX, \
+from gtfs.constants.gtfs_constants import WPG_BLOCK_ID_TOKEN_DELIMITER, WPG_BLOCK_ID_NUM_TOKENS, WPG_BLOCK_ID_SERVICE_ID_TOKEN_INDEX, \
     WPG_BLOCK_ID_ROUTE_FAMILY_TOKEN_INDEX, WPG_BLOCK_ID_NUMBER_TOKEN_INDEX
-from utilities.invariant_helper import require_not_none, require_state, require_non_empty_str
+from invariant_helper import require_not_none, require_state, require_non_empty_str
 
 
 class WinnipegBlockID:

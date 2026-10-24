@@ -1,9 +1,9 @@
 import csv
 from typing import TextIO, Sequence
-from gtfs.exceptions.csv_parsing.gtfs_file_error import GTFSFileNotFoundError, MissingGTFSFileColumnError, \
+from gtfs.exceptions.gtfs_file_error import GTFSFileNotFoundError, MissingGTFSFileColumnError, \
     DuplicateGTFSFileColumnError, EmptyGTFSFileError
-from gtfs.gtfs_constants import FILE_ENCODING
-from utilities.invariant_helper import require_not_none, require_non_empty_str, require_state
+from gtfs.constants.gtfs_constants import FILE_ENCODING
+from invariant_helper import require_not_none, require_non_empty_str, require_state
 
 
 class GTFSFileOpener:

@@ -1,5 +1,5 @@
 import validators
-from utilities.invariant_helper import require_not_none, require_state, require_non_empty_str
+from invariant_helper import require_not_none, require_state, require_non_empty_str
 
 
 class Email:

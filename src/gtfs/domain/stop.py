@@ -1,6 +1,6 @@
 from gtfs.domain.values.coordinates import Coordinates
 from gtfs.domain.values.url import Url
-from utilities.invariant_helper import require_not_none, require_non_empty_str
+from invariant_helper import require_not_none, require_non_empty_str
 
 
 class Stop:

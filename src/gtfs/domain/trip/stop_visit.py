@@ -1,6 +1,6 @@
 from datetime import timedelta
 from gtfs.domain.stop import Stop
-from utilities.invariant_helper import require_not_none, require_state
+from invariant_helper import require_not_none, require_state
 
 
 class StopVisit:

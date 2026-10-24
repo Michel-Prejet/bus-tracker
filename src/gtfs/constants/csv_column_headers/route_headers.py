@@ -1,0 +1,8 @@
+ROUTE_ID_COL_HEADER = "route_id"
+ROUTE_SHORT_NAME_COL_HEADER = "route_short_name"
+ROUTE_LONG_NAME_COL_HEADER = "route_long_name"
+ROUTE_TYPE_COL_HEADER = "route_type"
+ROUTE_URL_COL_HEADER = "route_url"
+ROUTE_BACKGROUND_COLOUR_COL_HEADER = "route_color"
+ROUTE_TEXT_COLOUR_COL_HEADER = "route_text_color"
+ROUTE_SORT_ORDER_COL_HEADER = "route_sort_order"

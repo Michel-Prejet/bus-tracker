@@ -1,5 +1,5 @@
 from datetime import timedelta, date
-from utilities.invariant_helper import require_not_none, require_state
+from invariant_helper import require_not_none, require_state
 
 
 class GTFSTimestamp:

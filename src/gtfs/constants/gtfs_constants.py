@@ -1,5 +1,16 @@
 from datetime import date
 
+# FILE NAMES
+AGENCY_FILE_NAME = "agency.txt"
+FEED_INFO_FILE_NAME = "feed_info.txt"
+ROUTES_FILE_NAME = "routes.txt"
+STOPS_FILE_NAME = "stops.txt"
+STOP_TIMES_FILE_NAME = "stop_times.txt"
+SERVICE_PATTERNS_FILE_NAME = "calendar.txt"
+SERVICE_PATTERN_EXCEPTIONS_FILE_NAME = "calendar_dates.txt"
+SHAPES_FILE_NAME = "shapes.txt"
+TRIPS_FILE_NAME = "trips.txt"
+
 # COLOURS
 HEX_COLOUR_BASE = 16
 HEX_COLOUR_LENGTH = 6

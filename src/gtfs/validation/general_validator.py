@@ -1,9 +1,9 @@
 import validators
 from gtfs.domain.values.colour import Colour
 from gtfs.domain.values.url import Url
-from gtfs.gtfs_constants import HEX_COLOUR_LENGTH
-from utilities.invariant_helper import require_not_none, require_state
-from utilities.is_hex import is_hex
+from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH
+from invariant_helper import require_not_none
+from gtfs.utilities.is_hex import is_hex
 
 
 def validate_and_parse_optional_str(raw: str) -> str | None:

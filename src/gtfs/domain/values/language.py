@@ -1,5 +1,5 @@
 from language_tags import tags
-from utilities.invariant_helper import require_not_none, require_non_empty_str, require_state
+from invariant_helper import require_not_none, require_non_empty_str, require_state
 
 
 class Language:

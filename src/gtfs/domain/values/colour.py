@@ -1,7 +1,7 @@
-from utilities.invariant_helper import require_not_none, require_state
-from gtfs.gtfs_constants import HEX_COLOUR_LENGTH, HEX_COLOUR_BASE, HEX_COLOUR_RED_SLICE, HEX_COLOUR_GREEN_SLICE, \
+from invariant_helper import require_not_none, require_state
+from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH, HEX_COLOUR_BASE, HEX_COLOUR_RED_SLICE, HEX_COLOUR_GREEN_SLICE, \
     HEX_COLOUR_BLUE_SLICE, HEX_PRIMARY_COLOUR_LENGTH
-from utilities.is_hex import is_hex
+from gtfs.utilities.is_hex import is_hex
 
 
 class Colour:

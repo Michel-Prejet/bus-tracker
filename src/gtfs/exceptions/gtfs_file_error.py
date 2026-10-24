@@ -2,7 +2,7 @@
 Family of exceptions thrown whenever a GTFS file is missing, can't be opened,
 or is malformed.
 """
-from utilities.invariant_helper import require_not_none, require_non_empty_str, require_state
+from invariant_helper import require_not_none, require_non_empty_str, require_state
 
 
 class GTFSFileError(Exception):

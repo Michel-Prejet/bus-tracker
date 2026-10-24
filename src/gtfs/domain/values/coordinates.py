@@ -1,5 +1,5 @@
-from gtfs.gtfs_constants import MIN_LATITUDE, MAX_LATITUDE, MIN_LONGITUDE, MAX_LONGITUDE
-from utilities.invariant_helper import require_not_none, require_state
+from gtfs.constants.gtfs_constants import MIN_LATITUDE, MAX_LATITUDE, MIN_LONGITUDE, MAX_LONGITUDE
+from invariant_helper import require_not_none, require_state
 
 
 class Coordinates:
