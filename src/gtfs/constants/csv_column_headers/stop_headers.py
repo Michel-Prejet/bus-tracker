@@ -1,0 +1,6 @@
+STOP_ID_COL_HEADER = "stop_id"
+STOP_CODE_COL_HEADER = "stop_code"
+STOP_NAME_COL_HEADER = "stop_name"
+STOP_LATITUDE_COL_HEADER = "stop_lat"
+STOP_LONGITUDE_COL_HEADER = "stop_lon"
+STOP_URL_COL_HEADER = "stop_url"

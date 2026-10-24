@@ -1,5 +1,6 @@
 from typing import Callable
 from gtfs.exceptions.gtfs_file_error import MissingGTFSTokenError
+from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.gtfs_file_opener import GTFSFileOpener
 from invariant_helper import require_not_none, require_non_empty_str, require_state
 
@@ -56,7 +57,7 @@ def get_opt_attribute[T](
         validator=validator
     )
     require_non_empty_str(column_name=column_name)
-    require_state(row_num >= 1, "Row number should be positive.")
+    require_valid_row_num(row_num)
 
     token_raw = row.get(column_name)
 

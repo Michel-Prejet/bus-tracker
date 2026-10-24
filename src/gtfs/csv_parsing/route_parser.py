@@ -4,11 +4,13 @@ from gtfs.constants.csv_column_headers.route_headers import ROUTE_ID_COL_HEADER,
 from gtfs.csv_parsing.csv_parsing_helper import get_opt_attribute, parse_gtfs_file
 from gtfs.domain.route import Route
 from gtfs.utilities.dict_reader_row_to_csv import dict_reader_row_to_csv
+from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.route_validator import validate_and_parse_route_id, validate_and_parse_route_type, \
     validate_and_parse_route_url, validate_and_parse_route_background_colour, validate_and_parse_route_text_colour, \
     validate_and_parse_route_sort_order, validate_route_attribute_combination, validate_route_collection, \
     validate_and_parse_route_name
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_not_none
+
 
 ROUTE_REQUIRED_COLUMNS = [
     ROUTE_ID_COL_HEADER,
@@ -27,12 +29,12 @@ def parse_routes(file_name: str) -> list[Route]:
         collection_validator=validate_route_collection
     )
 
-def _create_route_from_row(row: dict[str, str], row_num: int) -> Route:
+def _create_route_from_row(row: dict[str, str | None], row_num: int) -> Route:
     require_not_none(
         row=row,
         row_number=row_num
     )
-    require_state(row_num >= 0, "Row number should not be negative.")
+    require_valid_row_num(row_num)
 
     route_id = validate_and_parse_route_id(row[ROUTE_ID_COL_HEADER], row_num)
 
