@@ -7,7 +7,7 @@ from gtfs.exceptions.gtfs_attribute_error import GTFSAttributeError
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_optional_str, validate_and_parse_latitude, \
-    validate_and_parse_longitude, validate_and_parse_url
+    validate_and_parse_longitude, validate_and_parse_url, validate_and_parse_nonempty_id_str, assert_that_ids_are_unique
 from invariant_helper import require_not_none
 
 
@@ -20,12 +20,13 @@ def validate_stop_collection(stops: list[Stop]) -> None:
     for stop in stops:
         require_not_none(stop_in_list=stop)
 
-    ids_seen = set()
-
-    for stop in stops:
-        if stop.id in ids_seen:
-            raise GTFSCollectionError(STOPS_FILE_NAME, [STOP_ID_COL_HEADER])
-        ids_seen.add(stop.id)
+    try:
+        assert_that_ids_are_unique([stop.id for stop in stops])
+    except ValueError:
+        raise GTFSCollectionError(
+            STOPS_FILE_NAME,
+            [STOP_ID_COL_HEADER]
+        )
 
 def validate_and_parse_stop_id(raw: str, row_num: int) -> str:
     """
@@ -35,13 +36,15 @@ def validate_and_parse_stop_id(raw: str, row_num: int) -> str:
     require_not_none(raw_stop_id=raw)
     require_valid_row_num(row_num)
 
-    raw = raw.strip()
-
-    if not raw:
-        raise GTFSAttributeError(STOPS_FILE_NAME, STOP_ID_COL_HEADER,
-                                 row_num, raw)
-
-    return raw
+    try:
+        return validate_and_parse_nonempty_id_str(raw)
+    except ValueError as e:
+        raise GTFSAttributeError(
+            STOPS_FILE_NAME,
+            STOP_ID_COL_HEADER,
+            row_num,
+            raw
+        ) from e
 
 def validate_and_parse_stop_code(raw: str, row_num: int) -> str | None:
     """

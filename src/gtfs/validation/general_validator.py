@@ -1,13 +1,42 @@
+from datetime import date, datetime
 from math import isfinite
 import validators
 from gtfs.domain.values.colour import Colour
-from gtfs.domain.values.coordinates import Coordinates
 from gtfs.domain.values.url import Url
 from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH, MIN_LATITUDE, MAX_LATITUDE, MAX_LONGITUDE, MIN_LONGITUDE
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from invariant_helper import require_not_none
 from gtfs.utilities.is_hex import is_hex
 
+
+def assert_that_ids_are_unique(raw: list[str]) -> None:
+    """
+    Throws an exception if the same ID appears more than once in the given
+    list.
+    """
+    require_not_none(raw_id_list=raw)
+    for raw_id in raw:
+        require_not_none(raw_id_in_list=raw_id)
+
+    ids_seen = set()
+
+    for raw_id in raw:
+        if raw_id in ids_seen:
+            raise ValueError
+        ids_seen.add(raw_id)
+
+def validate_and_parse_nonempty_id_str(raw: str) -> str:
+    """
+    Throws an exception if the given string is empty or only whitespace;
+    otherwise returns the trimmed string.
+    """
+    require_not_none(raw_id=raw)
+
+    raw = raw.strip()
+
+    if not raw:
+        raise ValueError
+
+    return raw
 
 def validate_and_parse_optional_str(raw: str) -> str | None:
     """
@@ -95,6 +124,22 @@ def validate_and_parse_float_str(raw: str) -> float:
 
     return value
 
+def validate_and_parse_boolean_str(raw: str) -> bool:
+    """
+    Throws the exception if the given string is not "0" or "1"; returns the
+    corresponding boolean otherwise.
+    """
+    require_not_none(boolean_string=raw)
+
+    raw = raw.strip()
+
+    if raw == "0":
+        return False
+    elif raw == "1":
+        return True
+    else:
+        raise ValueError
+
 def validate_and_parse_latitude(raw: str) -> float:
     """
     Throws an exception if the given string is not a floating-point value between
@@ -122,6 +167,22 @@ def validate_and_parse_longitude(raw: str) -> float:
         raise ValueError
 
     return longitude
+
+def validate_and_parse_date(raw: str) -> date:
+    """
+    Throws an exception if the given string is not a valid date in
+    YYYYMMDD format; returns a date object otherwise.
+    """
+    DATE_LENGTH = 8
+
+    require_not_none(raw_date=raw)
+
+    raw = raw.strip()
+
+    if len(raw) != DATE_LENGTH:
+        raise ValueError
+
+    return datetime.strptime(raw, "%Y%m%d").date()
 
 
 

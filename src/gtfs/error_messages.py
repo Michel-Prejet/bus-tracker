@@ -2,6 +2,7 @@ from gtfs.exceptions.gtfs_attribute_error import GTFSAttributeError
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_file_error import GTFSFileError, GTFSFileNotFoundError, EmptyGTFSFileError, \
     MissingGTFSTokenError, MissingGTFSFileColumnError, DuplicateGTFSFileColumnError, GTFSFileColumnError
+from gtfs.exceptions.gtfs_foreign_key_error import GTFSForeignKeyError
 from gtfs.exceptions.gtfs_instance_error import GTFSInstanceError
 
 
@@ -30,8 +31,13 @@ def get_err_msg(e: Exception) -> str:
                 f"Could not finish parsing '{e.file_name}' because the "
                 f"collection of objects constructed violates business rules "
                 f"associated with the file.\n"
-                f"Problematic values could be found in the column(s) "
-                f"'{",".join(map(str, e.violated_column_names))}'."
+                f"Problematic values could be found in the column(s): "
+                f"{", ".join(map(str, e.violated_column_names))}."
+            )
+        case GTFSForeignKeyError():
+            return (
+                f"Could not match the foreign key '{e.invalid_token}' in the "
+                f"column '{e.column_name}' of {e.file_name} with any row."
             )
 
     return f"An unexpected error occurred: {e}"

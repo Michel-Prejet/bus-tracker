@@ -10,7 +10,8 @@ from gtfs.exceptions.gtfs_instance_error import GTFSInstanceError
 from gtfs.constants.gtfs_constants import ROUTES_FILE_NAME
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_url, validate_and_parse_colour, \
-    validate_and_parse_integer_str, validate_and_parse_optional_str
+    validate_and_parse_integer_str, validate_and_parse_optional_str, validate_and_parse_nonempty_id_str, \
+    assert_that_ids_are_unique
 from invariant_helper import require_not_none, require_state
 
 
@@ -23,12 +24,13 @@ def validate_route_collection(routes: list[Route]) -> None:
     for route in routes:
         require_not_none(route_in_list=route)
 
-    ids_seen = set()
-
-    for route in routes:
-        if route.id in ids_seen:
-            raise GTFSCollectionError(ROUTES_FILE_NAME, [ROUTE_ID_COL_HEADER])
-        ids_seen.add(route.id)
+    try:
+        assert_that_ids_are_unique([route.id for route in routes])
+    except ValueError:
+        raise GTFSCollectionError(
+            ROUTES_FILE_NAME,
+            [ROUTE_ID_COL_HEADER]
+        )
 
 def validate_route_attribute_combination(short_name: str | None,
                                          long_name: str | None,
@@ -51,13 +53,15 @@ def validate_and_parse_route_id(raw: str, row_num: int) -> str:
     require_not_none(raw_route_id=raw)
     require_valid_row_num(row_num)
 
-    raw = raw.strip()
-
-    if not raw:
-        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_ID_COL_HEADER,
-                                 row_num, raw)
-
-    return raw
+    try:
+        return validate_and_parse_nonempty_id_str(raw)
+    except ValueError as e:
+        raise GTFSAttributeError(
+            ROUTES_FILE_NAME,
+            ROUTE_ID_COL_HEADER,
+            row_num,
+            raw
+        ) from e
 
 def validate_and_parse_route_name(raw: str, row_num: int) -> str | None:
     """

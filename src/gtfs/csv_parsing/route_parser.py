@@ -20,7 +20,7 @@ ROUTE_REQUIRED_COLUMNS = [
 def parse_routes(file_name: str) -> list[Route]:
     """
     Creates a list of Route objects from the rows in the given file, or
-    raises an exception if the file or its content are invalid.
+    throws an exception if the file or its content are invalid.
     """
     return parse_gtfs_file(
         file_name=file_name,
@@ -30,10 +30,7 @@ def parse_routes(file_name: str) -> list[Route]:
     )
 
 def _create_route_from_row(row: dict[str, str | None], row_num: int) -> Route:
-    require_not_none(
-        row=row,
-        row_number=row_num
-    )
+    require_not_none(row=row)
     require_valid_row_num(row_num)
 
     route_id = validate_and_parse_route_id(row[ROUTE_ID_COL_HEADER], row_num)

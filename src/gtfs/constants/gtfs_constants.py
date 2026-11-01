@@ -7,7 +7,7 @@ ROUTES_FILE_NAME = "routes.txt"
 STOPS_FILE_NAME = "stops.txt"
 STOP_TIMES_FILE_NAME = "stop_times.txt"
 SERVICE_PATTERNS_FILE_NAME = "calendar.txt"
-SERVICE_PATTERN_EXCEPTIONS_FILE_NAME = "calendar_dates.txt"
+SERVICE_PATTERN_OVERRIDES_FILE_NAME = "calendar_dates.txt"
 SHAPES_FILE_NAME = "shapes.txt"
 TRIPS_FILE_NAME = "trips.txt"
 

@@ -1,3 +1,4 @@
+from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from invariant_helper import require_not_none, require_non_empty_str, require_state
 
 
@@ -15,11 +16,10 @@ class GTFSAttributeError(Exception):
         require_not_none(
             file_name=self._file_name,
             column_name=self._column_name,
-            row_number=self._row_num,
             invalid_token=self._invalid_token
         )
         require_non_empty_str(file_name=file_name, column_name=self._column_name)
-        require_state(self._row_num >= 1, "Row number should be positive.")
+        require_valid_row_num(row_num)
 
     @property
     def file_name(self) -> str:
