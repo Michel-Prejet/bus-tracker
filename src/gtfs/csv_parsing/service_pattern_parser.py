@@ -1,15 +1,12 @@
 from gtfs.constants.csv_column_headers.service_pattern_headers import SERVICE_ID_COL_HEADER, \
     SERVICE_PATTERN_START_DATE_COL_HEADER, SERVICE_PATTERN_END_DATE_COL_HEADER, MONDAY_COL_HEADER, TUESDAY_COL_HEADER, \
     WEDNESDAY_COL_HEADER, THURSDAY_COL_HEADER, FRIDAY_COL_HEADER, SATURDAY_COL_HEADER, SUNDAY_COL_HEADER
-from gtfs.constants.gtfs_constants import SERVICE_PATTERNS_FILE_NAME
 from gtfs.csv_parsing.csv_parsing_helper import parse_gtfs_file
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
-from gtfs.domain.values.date_range import DateRange
-from gtfs.exceptions.gtfs_instance_error import GTFSInstanceError
-from gtfs.utilities.dict_reader_row_to_csv import dict_reader_row_to_csv
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.service_pattern_validator import validate_and_parse_service_id, validate_and_parse_start_date, \
-    validate_and_parse_end_date, validate_and_parse_active_weekdays, validate_service_pattern_collection
+    validate_and_parse_end_date, validate_and_parse_active_weekdays, validate_service_pattern_collection, \
+    validate_and_parse_service_pattern_date_range
 from invariant_helper import require_not_none
 
 
@@ -38,7 +35,7 @@ def parse_service_patterns(file_name: str) -> list[ServicePattern]:
         collection_validator=validate_service_pattern_collection
     )
 
-def _create_service_pattern_from_row(row: dict[str, str | None],
+def _create_service_pattern_from_row(row: dict[str, str],
                                      row_num: int) -> ServicePattern:
     require_not_none(row=row)
     require_valid_row_num(row_num)
@@ -53,13 +50,11 @@ def _create_service_pattern_from_row(row: dict[str, str | None],
         row[SERVICE_PATTERN_END_DATE_COL_HEADER],
         row_num
     )
-    if start_date > end_date:
-        raise GTFSInstanceError(
-            SERVICE_PATTERNS_FILE_NAME,
-            dict_reader_row_to_csv(row),
-            row_num
-        )
-    date_range = DateRange(start_date, end_date)
+    date_range = validate_and_parse_service_pattern_date_range(
+        start_date,
+        end_date,
+        row_num
+    )
 
     active_weekdays = validate_and_parse_active_weekdays(
         {

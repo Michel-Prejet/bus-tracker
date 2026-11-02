@@ -1,31 +1,20 @@
-from gtfs.exceptions.gtfs_attribute_error import GTFSAttributeError
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_file_error import GTFSFileError, GTFSFileNotFoundError, EmptyGTFSFileError, \
     MissingGTFSTokenError, MissingGTFSFileColumnError, DuplicateGTFSFileColumnError, GTFSFileColumnError
-from gtfs.exceptions.gtfs_foreign_key_error import GTFSForeignKeyError
-from gtfs.exceptions.gtfs_instance_error import GTFSInstanceError
+from gtfs.exceptions.gtfs_row_error import GTFSRowError, GTFSAttributeError, GTFSLogicError, GTFSInstanceError, \
+    GTFSForeignKeyError
 
 
 def get_err_msg(e: Exception) -> str:
     """
     Returns the error message associated with the given exception type.
     """
+    from gtfs.exceptions.gtfs_row_error import GTFSRowError
     match e:
         case GTFSFileError():
             return _get_err_msg_for_gtfs_file_error(e)
-        case GTFSAttributeError():
-            return (
-                f"Object construction failed on row {e.row_num} of "
-                f"'{e.file_name}' due to the invalid token '{e.invalid_token}' "
-                f"in column '{e.column_name}'."
-            )
-        case GTFSInstanceError():
-            return (
-                f"Object construction failed on row {e.row_num} of "
-                f"'{e.file_name}' because the combination of attributes\n"
-                f"'{e.row}'\n"
-                f"constitutes an invalid instance."
-            )
+        case GTFSRowError():
+            return _get_err_msg_for_gtfs_row_error(e)
         case GTFSCollectionError():
             return (
                 f"Could not finish parsing '{e.file_name}' because the "
@@ -33,11 +22,6 @@ def get_err_msg(e: Exception) -> str:
                 f"associated with the file.\n"
                 f"Problematic values could be found in the column(s): "
                 f"{", ".join(map(str, e.violated_column_names))}."
-            )
-        case GTFSForeignKeyError():
-            return (
-                f"Could not match the foreign key '{e.invalid_token}' in the "
-                f"column '{e.column_name}' of {e.file_name} with any row."
             )
 
     return f"An unexpected error occurred: {e}"
@@ -58,3 +42,33 @@ def _get_err_msg_for_gtfs_file_error(e: GTFSFileError) -> str:
             return f"The column '{e.column_name}' in the file '{e.file_name}' caused an unspecified error."
 
     return f"The file '{e.file_name}' caused an unspecified error."
+
+def _get_err_msg_for_gtfs_row_error(e: GTFSRowError) -> str:
+    match e:
+        case GTFSForeignKeyError():
+            return (
+                f"Object construction failed on row {e.row_num} of "
+                f"'{e.file_name}' because the foreign key '{e.invalid_token}' "
+                f"in the column '{e.column_name}' does not correspond to any "
+                f"row in '{e.referenced_file_name}'."
+            )
+        case GTFSAttributeError():
+            return (
+                f"Object construction failed on row {e.row_num} of "
+                f"'{e.file_name}' due to the invalid token '{e.invalid_token}' "
+                f"in column '{e.column_name}'."
+            )
+        case GTFSLogicError():
+            return (
+                f"Object construction failed on row {e.row_num} of "
+                f"'{e.file_name}' due to an illogical combination of attributes:"
+                f"\n{e.col_names_and_invalid_tokens}"
+            )
+        case GTFSInstanceError():
+            return (
+                f"Object construction failed on row {e.row_num} of "
+                f"'{e.file_name}' due to the invalid instance given by the row:\n"
+                f"{e.row}"
+            )
+
+    return f"Row {e.row_num} in '{e.file_name}' caused an unspecified error."

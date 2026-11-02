@@ -3,8 +3,8 @@ from gtfs.constants.csv_column_headers.stop_headers import STOP_ID_COL_HEADER, S
 from gtfs.constants.gtfs_constants import STOPS_FILE_NAME
 from gtfs.domain.stop import Stop
 from gtfs.domain.values.url import Url
-from gtfs.exceptions.gtfs_attribute_error import GTFSAttributeError
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
+from gtfs.exceptions.gtfs_row_error import GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_optional_str, validate_and_parse_latitude, \
     validate_and_parse_longitude, validate_and_parse_url, validate_and_parse_nonempty_id_str, assert_that_ids_are_unique
@@ -24,8 +24,8 @@ def validate_stop_collection(stops: list[Stop]) -> None:
         assert_that_ids_are_unique([stop.id for stop in stops])
     except ValueError:
         raise GTFSCollectionError(
-            STOPS_FILE_NAME,
-            [STOP_ID_COL_HEADER]
+            file_name=STOPS_FILE_NAME,
+            names_of_columns_with_violated_restrictions=[STOP_ID_COL_HEADER]
         )
 
 def validate_and_parse_stop_id(raw: str, row_num: int) -> str:
@@ -40,10 +40,10 @@ def validate_and_parse_stop_id(raw: str, row_num: int) -> str:
         return validate_and_parse_nonempty_id_str(raw)
     except ValueError as e:
         raise GTFSAttributeError(
-            STOPS_FILE_NAME,
-            STOP_ID_COL_HEADER,
-            row_num,
-            raw
+            file_name=STOPS_FILE_NAME,
+            column_name=STOP_ID_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
         ) from e
 
 def validate_and_parse_stop_code(raw: str, row_num: int) -> str | None:
@@ -67,8 +67,12 @@ def validate_and_parse_stop_name(raw: str, row_num: int) -> str:
     raw = raw.strip()
 
     if not raw:
-        raise GTFSAttributeError(STOPS_FILE_NAME, STOP_NAME_COL_HEADER,
-                                 row_num, raw)
+        raise GTFSAttributeError(
+            file_name=STOPS_FILE_NAME,
+            column_name=STOP_NAME_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        )
 
     return raw
 
@@ -83,8 +87,12 @@ def validate_and_parse_stop_latitude(raw: str, row_num: int) -> float:
     try:
         return validate_and_parse_latitude(raw)
     except ValueError as e:
-        raise GTFSAttributeError(STOPS_FILE_NAME, STOP_LATITUDE_COL_HEADER,
-                                 row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=STOPS_FILE_NAME,
+            column_name=STOP_LATITUDE_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 
 def validate_and_parse_stop_longitude(raw: str, row_num: int) -> float:
     """
@@ -97,8 +105,12 @@ def validate_and_parse_stop_longitude(raw: str, row_num: int) -> float:
     try:
         return validate_and_parse_longitude(raw)
     except ValueError as e:
-        raise GTFSAttributeError(STOPS_FILE_NAME, STOP_LONGITUDE_COL_HEADER,
-                                 row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=STOPS_FILE_NAME,
+            column_name=STOP_LONGITUDE_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 
 def validate_and_parse_stop_url(raw: str, row_num: int) -> Url | None:
     """
@@ -116,6 +128,10 @@ def validate_and_parse_stop_url(raw: str, row_num: int) -> Url | None:
     try:
         return validate_and_parse_url(raw)
     except ValueError as e:
-        raise GTFSAttributeError(STOPS_FILE_NAME, STOP_URL_COL_HEADER,
-                                 row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=STOPS_FILE_NAME,
+            column_name=STOP_URL_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 

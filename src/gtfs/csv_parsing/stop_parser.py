@@ -30,10 +30,7 @@ def parse_stops(file_name: str) -> list[Stop]:
     )
 
 def _create_stop_from_row(row: dict[str, str | None], row_num: int) -> Stop:
-    require_not_none(
-        row=row,
-        row_number=row_num
-    )
+    require_not_none(row=row)
     require_valid_row_num(row_num)
 
     stop_id = validate_and_parse_stop_id(row[STOP_ID_COL_HEADER], row_num)

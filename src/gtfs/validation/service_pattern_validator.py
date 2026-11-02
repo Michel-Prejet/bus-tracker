@@ -5,8 +5,9 @@ from gtfs.constants.csv_column_headers.service_pattern_headers import MONDAY_COL
 from gtfs.constants.gtfs_constants import SERVICE_PATTERNS_FILE_NAME
 from gtfs.domain.enums.day_of_week import DayOfWeek
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
-from gtfs.exceptions.gtfs_attribute_error import GTFSAttributeError
+from gtfs.domain.values.date_range import DateRange
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
+from gtfs.exceptions.gtfs_row_error import GTFSLogicError, GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_boolean_str, validate_and_parse_nonempty_id_str, \
     validate_and_parse_date, assert_that_ids_are_unique
@@ -27,8 +28,8 @@ def validate_service_pattern_collection(service_patterns: list[ServicePattern]) 
         assert_that_ids_are_unique([pattern.service_id for pattern in service_patterns])
     except ValueError:
         raise GTFSCollectionError(
-            SERVICE_PATTERNS_FILE_NAME,
-            [SERVICE_ID_COL_HEADER]
+            file_name=SERVICE_PATTERNS_FILE_NAME,
+            names_of_columns_with_violated_restrictions=[SERVICE_ID_COL_HEADER]
         )
 
 def validate_and_parse_service_id(raw: str, row_num: int) -> str:
@@ -43,10 +44,10 @@ def validate_and_parse_service_id(raw: str, row_num: int) -> str:
         return validate_and_parse_nonempty_id_str(raw)
     except ValueError as e:
         raise GTFSAttributeError(
-            SERVICE_PATTERNS_FILE_NAME,
-            SERVICE_ID_COL_HEADER,
-            row_num,
-            raw
+            file_name=SERVICE_PATTERNS_FILE_NAME,
+            column_name=SERVICE_ID_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
         ) from e
 
 class RawWeekdayFlags(TypedDict):
@@ -141,11 +142,35 @@ def _validate_flag_and_append_weekday_if_true(
             active_weekdays.add(weekday_to_append)
     except ValueError as e:
         raise GTFSAttributeError(
-            SERVICE_PATTERNS_FILE_NAME,
-            column_name,
-            row_num,
-            flag_raw
+            file_name=SERVICE_PATTERNS_FILE_NAME,
+            column_name=column_name,
+            row_num=row_num,
+            invalid_token=flag_raw
         ) from e
+
+def validate_and_parse_service_pattern_date_range(start_date: date, end_date: date,
+                                                  row_num: int) -> DateRange:
+    """
+    Throws an exception if the given start date comes before the given end
+    date; otherwise returns a DateRange object.
+    """
+    require_not_none(
+        start_date=start_date,
+        end_date=end_date
+    )
+    require_valid_row_num(row_num)
+
+    if start_date > end_date:
+        raise GTFSLogicError(
+            file_name=SERVICE_PATTERNS_FILE_NAME,
+            row_num=row_num,
+            col_names_and_invalid_tokens={
+                SERVICE_PATTERN_START_DATE_COL_HEADER: start_date.isoformat(),
+                SERVICE_PATTERN_END_DATE_COL_HEADER: end_date.isoformat()
+            }
+        )
+
+    return DateRange(start_date, end_date)
 
 def validate_and_parse_start_date(raw: str, row_num: int) -> date:
     """
@@ -159,10 +184,10 @@ def validate_and_parse_start_date(raw: str, row_num: int) -> date:
         return validate_and_parse_date(raw)
     except ValueError as e:
         raise GTFSAttributeError(
-            SERVICE_PATTERNS_FILE_NAME,
-            SERVICE_PATTERN_START_DATE_COL_HEADER,
-            row_num,
-            raw
+            file_name=SERVICE_PATTERNS_FILE_NAME,
+            column_name=SERVICE_PATTERN_START_DATE_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
         ) from e
 
 def validate_and_parse_end_date(raw: str, row_num: int) -> date:
@@ -177,9 +202,9 @@ def validate_and_parse_end_date(raw: str, row_num: int) -> date:
         return validate_and_parse_date(raw)
     except ValueError as e:
         raise GTFSAttributeError(
-            SERVICE_PATTERNS_FILE_NAME,
-            SERVICE_PATTERN_END_DATE_COL_HEADER,
-            row_num,
-            raw
+            file_name=SERVICE_PATTERNS_FILE_NAME,
+            column_name=SERVICE_PATTERN_END_DATE_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
         ) from e
 

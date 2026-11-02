@@ -4,15 +4,14 @@ from gtfs.domain.enums.route_types import RouteType
 from gtfs.domain.route import Route
 from gtfs.domain.values.colour import Colour
 from gtfs.domain.values.url import Url
-from gtfs.exceptions.gtfs_attribute_error import GTFSAttributeError
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
-from gtfs.exceptions.gtfs_instance_error import GTFSInstanceError
 from gtfs.constants.gtfs_constants import ROUTES_FILE_NAME
+from gtfs.exceptions.gtfs_row_error import GTFSInstanceError, GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_url, validate_and_parse_colour, \
     validate_and_parse_integer_str, validate_and_parse_optional_str, validate_and_parse_nonempty_id_str, \
     assert_that_ids_are_unique
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_not_none
 
 
 def validate_route_collection(routes: list[Route]) -> None:
@@ -28,8 +27,8 @@ def validate_route_collection(routes: list[Route]) -> None:
         assert_that_ids_are_unique([route.id for route in routes])
     except ValueError:
         raise GTFSCollectionError(
-            ROUTES_FILE_NAME,
-            [ROUTE_ID_COL_HEADER]
+            file_name=ROUTES_FILE_NAME,
+            names_of_columns_with_violated_restrictions=[ROUTE_ID_COL_HEADER]
         )
 
 def validate_route_attribute_combination(short_name: str | None,
@@ -43,7 +42,11 @@ def validate_route_attribute_combination(short_name: str | None,
     require_valid_row_num(row_num)
 
     if short_name is None and long_name is None:
-        raise GTFSInstanceError(ROUTES_FILE_NAME, row, row_num)
+        raise GTFSInstanceError(
+            file_name=ROUTES_FILE_NAME,
+            row=row,
+            row_num=row_num
+        )
 
 def validate_and_parse_route_id(raw: str, row_num: int) -> str:
     """
@@ -57,10 +60,10 @@ def validate_and_parse_route_id(raw: str, row_num: int) -> str:
         return validate_and_parse_nonempty_id_str(raw)
     except ValueError as e:
         raise GTFSAttributeError(
-            ROUTES_FILE_NAME,
-            ROUTE_ID_COL_HEADER,
-            row_num,
-            raw
+            file_name=ROUTES_FILE_NAME,
+            column_name=ROUTE_ID_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
         ) from e
 
 def validate_and_parse_route_name(raw: str, row_num: int) -> str | None:
@@ -85,7 +88,12 @@ def validate_and_parse_route_type(raw: str, row_num: int) -> RouteType:
     try:
         return RouteType(validate_and_parse_integer_str(raw))
     except ValueError as e:
-        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_TYPE_COL_HEADER, row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=ROUTES_FILE_NAME,
+            column_name=ROUTE_TYPE_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 
 def validate_and_parse_route_url(raw: str, row_num: int) -> Url | None:
     """
@@ -98,7 +106,12 @@ def validate_and_parse_route_url(raw: str, row_num: int) -> Url | None:
     try:
         return validate_and_parse_url(raw)
     except ValueError as e:
-        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_URL_COL_HEADER, row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=ROUTES_FILE_NAME,
+            column_name=ROUTE_URL_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 
 def validate_and_parse_route_background_colour(raw: str, row_num: int) -> Colour | None:
     """
@@ -112,8 +125,12 @@ def validate_and_parse_route_background_colour(raw: str, row_num: int) -> Colour
     try:
         return validate_and_parse_colour(raw)
     except ValueError as e:
-        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_BACKGROUND_COLOUR_COL_HEADER,
-                                 row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=ROUTES_FILE_NAME,
+            column_name=ROUTE_BACKGROUND_COLOUR_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 
 def validate_and_parse_route_text_colour(raw: str, row_num: int) -> Colour | None:
     """
@@ -127,8 +144,12 @@ def validate_and_parse_route_text_colour(raw: str, row_num: int) -> Colour | Non
     try:
         return validate_and_parse_colour(raw)
     except ValueError as e:
-        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_TEXT_COLOUR_COL_HEADER,
-                                 row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=ROUTES_FILE_NAME,
+            column_name=ROUTE_TEXT_COLOUR_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 
 def validate_and_parse_route_sort_order(raw: str, row_num: int) -> int | None:
     """
@@ -147,11 +168,19 @@ def validate_and_parse_route_sort_order(raw: str, row_num: int) -> int | None:
     try:
         sort_order = validate_and_parse_integer_str(raw)
     except ValueError as e:
-        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_SORT_ORDER_COL_HEADER,
-                                 row_num, raw) from e
+        raise GTFSAttributeError(
+            file_name=ROUTES_FILE_NAME,
+            column_name=ROUTE_SORT_ORDER_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        ) from e
 
     if sort_order < 0:
-        raise GTFSAttributeError(ROUTES_FILE_NAME, ROUTE_SORT_ORDER_COL_HEADER,
-                                 row_num, raw)
+        raise GTFSAttributeError(
+            file_name=ROUTES_FILE_NAME,
+            column_name=ROUTE_SORT_ORDER_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw
+        )
 
     return sort_order

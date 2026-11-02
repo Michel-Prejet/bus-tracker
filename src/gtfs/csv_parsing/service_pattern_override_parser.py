@@ -3,9 +3,11 @@ from gtfs.constants.csv_column_headers.service_pattern_override_headers import O
 from gtfs.csv_parsing.csv_parsing_helper import parse_gtfs_file
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.service_pattern.service_pattern_override import ServicePatternOverride
-from gtfs.validation.service_pattern_override_validator import validate_and_parse_override_service_id, \
-    validate_and_parse_override_date, validate_and_parse_override_type, get_service_pattern_from_foreign_key, \
-    validate_service_pattern_override_collection
+from gtfs.utilities.require_valid_row_num import require_valid_row_num
+from gtfs.validation.service_pattern_override_validator import validate_and_parse_override_type, \
+    validate_service_pattern_override_collection, validate_and_parse_override_service_id_as_foreign_key, \
+    validate_and_parse_override_date
+from invariant_helper import require_not_none
 
 
 SERVICE_PATTERN_OVERRIDE_REQUIRED_COLUMNS = [
@@ -25,29 +27,34 @@ def parse_service_pattern_overrides(
     corresponding ServicePattern objects in the given list, or an exception is
     thrown if any foreign key is invalid.
     """
-    override_assignments: list[tuple[str, ServicePatternOverride]] = parse_gtfs_file(
+    override_assignments: list[tuple[ServicePattern, ServicePatternOverride]] = parse_gtfs_file(
         file_name=file_name,
         required_column_names=SERVICE_PATTERN_OVERRIDE_REQUIRED_COLUMNS,
-        object_builder_from_row=_create_service_pattern_override_from_row,
+        object_builder_from_row=(
+            lambda row, row_num:
+            _create_service_pattern_override_from_row(row, row_num, service_patterns)
+        ),
         collection_validator=validate_service_pattern_override_collection
     )
 
-    for assignment in override_assignments:
-        service_id, override = assignment
+    for pattern, override in override_assignments:
+        pattern.add_override(override)
 
-        service_pattern = get_service_pattern_from_foreign_key(
-            service_id,
-            service_patterns
-        )
+    return [override for pattern, override in override_assignments]
 
-        service_pattern.add_override(override)
+def _create_service_pattern_override_from_row(
+        row: dict[str, str],
+        row_num: int,
+        service_patterns: list[ServicePattern]
+) -> tuple[ServicePattern, ServicePatternOverride]:
+    require_not_none(row=row, service_pattern_list=service_patterns)
+    for pattern in service_patterns:
+        require_not_none(service_pattern_in_list=pattern)
+    require_valid_row_num(row_num)
 
-    return [override for service_id, override in override_assignments]
-
-def _create_service_pattern_override_from_row(row: dict[str, str | None],
-                                              row_num: int) -> tuple[str, ServicePatternOverride]:
-    service_id = validate_and_parse_override_service_id(
+    service_id = validate_and_parse_override_service_id_as_foreign_key(
         row[OVERRIDE_SERVICE_ID_COL_HEADER],
+        service_patterns,
         row_num
     )
 
