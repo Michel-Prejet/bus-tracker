@@ -5,7 +5,7 @@ from gtfs.domain.values.url import Url
 from invariant_helper import require_not_none, require_non_empty_str
 
 
-class AgencyInfo:
+class Agency:
     """
     Stores static information about a transit agency, such as its name,
     website and fare URL, timezone, language, and contact information.
@@ -13,7 +13,6 @@ class AgencyInfo:
 
     def __init__(
             self,
-            agency_id: str | None,
             name: str,
             agency_url: Url,
             fare_url: Url | None,
@@ -22,7 +21,6 @@ class AgencyInfo:
             phone_num: str | None,
             email: Email | None
     ):
-        self._agency_id = agency_id
         self._name = name
         self._agency_url = agency_url
         self._fare_url = fare_url
@@ -32,10 +30,6 @@ class AgencyInfo:
         self._email = email
 
         self._check_agency_info()
-
-    @property
-    def id(self) -> str | None:
-        return self._agency_id
 
     @property
     def name(self) -> str:
@@ -71,9 +65,6 @@ class AgencyInfo:
             agency_url=self._agency_url,
             agency_timezone=self._timezone
         )
-
-        if self._agency_id is not None:
-            require_non_empty_str(agency_id=self._agency_id)
 
         require_non_empty_str(agency_name=self._name)
 

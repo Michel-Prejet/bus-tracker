@@ -44,9 +44,10 @@ def _create_stop_from_row(row: dict[str, str | None], row_num: int) -> Stop:
 
     name = validate_and_parse_stop_name(row[STOP_NAME_COL_HEADER], row_num)
 
-    latitude = validate_and_parse_stop_latitude(row[STOP_LATITUDE_COL_HEADER], row_num)
-    longitude = validate_and_parse_stop_longitude(row[STOP_LONGITUDE_COL_HEADER], row_num)
-    coordinates = Coordinates(latitude, longitude)
+    coordinates = Coordinates(
+        validate_and_parse_stop_latitude(row[STOP_LATITUDE_COL_HEADER], row_num),
+        validate_and_parse_stop_longitude(row[STOP_LONGITUDE_COL_HEADER], row_num)
+    )
 
     stop_url = get_opt_attribute(
         column_name=STOP_URL_COL_HEADER,

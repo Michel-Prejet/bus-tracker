@@ -1,6 +1,7 @@
 # Python cache
 __pycache__/
 *.py[cod]
+../.venv
 
 # IntelliJ
 .idea/
@@ -8,3 +9,5 @@ __pycache__/
 
 # Environment/secrets
 .env
+gtfs_archives/
+databases/

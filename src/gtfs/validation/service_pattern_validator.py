@@ -9,7 +9,7 @@ from gtfs.domain.values.date_range import DateRange
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSLogicError, GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
-from gtfs.validation.general_validator import validate_and_parse_boolean_str, validate_and_parse_nonempty_id_str, \
+from gtfs.validation.general_validator import validate_and_parse_boolean_str, validate_and_parse_nonempty_str, \
     validate_and_parse_date, assert_that_ids_are_unique
 from invariant_helper import require_not_none
 from datetime import date
@@ -41,7 +41,7 @@ def validate_and_parse_service_id(raw: str, row_num: int) -> str:
     require_valid_row_num(row_num)
 
     try:
-        return validate_and_parse_nonempty_id_str(raw)
+        return validate_and_parse_nonempty_str(raw)
     except ValueError as e:
         raise GTFSAttributeError(
             file_name=SERVICE_PATTERNS_FILE_NAME,

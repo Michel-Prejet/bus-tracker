@@ -24,7 +24,7 @@ def assert_that_ids_are_unique(raw: list[str]) -> None:
             raise ValueError
         ids_seen.add(raw_id)
 
-def validate_and_parse_nonempty_id_str(raw: str) -> str:
+def validate_and_parse_nonempty_str(raw: str) -> str:
     """
     Throws an exception if the given string is empty or only whitespace;
     otherwise returns the trimmed string.
@@ -38,7 +38,7 @@ def validate_and_parse_nonempty_id_str(raw: str) -> str:
 
     return raw
 
-def validate_and_parse_optional_str(raw: str) -> str | None:
+def parse_optional_str(raw: str) -> str | None:
     """
     Returns None if the given string is empty or only whitespace; otherwise
     returns the trimmed string.
@@ -58,7 +58,7 @@ def validate_and_parse_url(raw: str) -> Url | None:
     """
     require_not_none(raw_url=raw)
 
-    url = validate_and_parse_optional_str(raw)
+    url = parse_optional_str(raw)
 
     if url is None:
         return None
@@ -76,7 +76,7 @@ def validate_and_parse_colour(raw: str) -> Colour | None:
     """
     require_not_none(raw_background_colour=raw)
 
-    colour = validate_and_parse_optional_str(raw)
+    colour = parse_optional_str(raw)
 
     if colour is None:
         return None

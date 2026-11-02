@@ -6,8 +6,8 @@ from gtfs.domain.values.url import Url
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
-from gtfs.validation.general_validator import validate_and_parse_optional_str, validate_and_parse_latitude, \
-    validate_and_parse_longitude, validate_and_parse_url, validate_and_parse_nonempty_id_str, assert_that_ids_are_unique
+from gtfs.validation.general_validator import parse_optional_str, validate_and_parse_latitude, \
+    validate_and_parse_longitude, validate_and_parse_url, validate_and_parse_nonempty_str, assert_that_ids_are_unique
 from invariant_helper import require_not_none
 
 
@@ -37,7 +37,7 @@ def validate_and_parse_stop_id(raw: str, row_num: int) -> str:
     require_valid_row_num(row_num)
 
     try:
-        return validate_and_parse_nonempty_id_str(raw)
+        return validate_and_parse_nonempty_str(raw)
     except ValueError as e:
         raise GTFSAttributeError(
             file_name=STOPS_FILE_NAME,
@@ -54,7 +54,7 @@ def validate_and_parse_stop_code(raw: str, row_num: int) -> str | None:
     require_not_none(raw_stop_code=raw)
     require_valid_row_num(row_num)
 
-    return validate_and_parse_optional_str(raw)
+    return parse_optional_str(raw)
 
 def validate_and_parse_stop_name(raw: str, row_num: int) -> str:
     """

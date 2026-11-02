@@ -9,7 +9,7 @@ from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError, GTFSForeignKeyError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_date, validate_and_parse_integer_str, \
-    validate_and_parse_nonempty_id_str
+    validate_and_parse_nonempty_str
 from invariant_helper import require_not_none
 
 
@@ -53,7 +53,7 @@ def validate_and_parse_override_service_id_as_foreign_key(
     require_valid_row_num(row_num)
 
     try:
-        service_id =  validate_and_parse_nonempty_id_str(raw)
+        service_id =  validate_and_parse_nonempty_str(raw)
     except ValueError as e:
         raise GTFSAttributeError(
             file_name=SERVICE_PATTERN_OVERRIDES_FILE_NAME,
