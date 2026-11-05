@@ -1,0 +1,6 @@
+PUBLISHER_NAME_COL_HEADER = "feed_publisher_name"
+PUBLISHER_URL_COL_HEADER = "feed_publisher_url"
+FEED_LANGUAGE_COL_HEADER = "feed_lang"
+FEED_EMAIL_COL_HEADER = "feed_contact_email"
+FEED_START_DATE_COL_HEADER = "feed_start_date"
+FEED_END_DATE_COL_HEADER = "feed_end_date"

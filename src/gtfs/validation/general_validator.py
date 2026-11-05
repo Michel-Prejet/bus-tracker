@@ -1,7 +1,10 @@
 from datetime import date, datetime
 from math import isfinite
 import validators
+from language_tags import tags
 from gtfs.domain.values.colour import Colour
+from gtfs.domain.values.email import Email
+from gtfs.domain.values.language import Language
 from gtfs.domain.values.url import Url
 from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH, MIN_LATITUDE, MAX_LATITUDE, MAX_LONGITUDE, MIN_LONGITUDE
 from invariant_helper import require_not_none
@@ -183,6 +186,35 @@ def validate_and_parse_date(raw: str) -> date:
         raise ValueError
 
     return datetime.strptime(raw, "%Y%m%d").date()
+
+def validate_and_parse_language_code(raw: str) -> Language:
+    """
+    Throws an exception if the given string not a valid BCP 47 language tag;
+    returns a Language object otherwise.
+    """
+    require_not_none(raw_language_code=raw)
+
+    raw = raw.strip()
+
+    if not tags.check(raw):
+        raise ValueError
+
+    return Language(raw)
+
+def validate_and_parse_email(raw: str) -> Email:
+    """
+    Throws an exception if the given string is not a valid email address;
+    returns an Email object otherwise.
+    """
+    require_not_none(raw_email=raw)
+
+    raw = raw.strip()
+
+    if not validators.email(raw):
+        raise ValueError
+
+    return Email(raw)
+
 
 
 

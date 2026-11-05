@@ -1,17 +1,17 @@
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-import validators
-from language_tags import tags
 from gtfs.constants.csv_column_headers.agency_headers import AGENCY_NAME_COL_HEADER, AGENCY_URL_COL_HEADER, \
     AGENCY_FARE_URL_COL_HEADER, AGENCY_TIMEZONE_COL_HEADER, AGENCY_LANGUAGE_COL_HEADER, AGENCY_EMAIL_COL_HEADER, \
     AGENCY_PHONE_COL_HEADER
-from gtfs.constants.gtfs_constants import AGENCY_FILE_NAME
+from gtfs.constants.gtfs_constants import AGENCY_FILE_NAME, NUM_AGENCIES_SUPPORTED
 from gtfs.domain.agency import Agency
+from gtfs.domain.values.email import Email
+from gtfs.domain.values.language import Language
 from gtfs.domain.values.url import Url
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_nonempty_str, validate_and_parse_url, \
-    parse_optional_str
+    parse_optional_str, validate_and_parse_language_code, validate_and_parse_email
 from invariant_helper import require_not_none
 
 
@@ -24,8 +24,6 @@ def validate_agency_collection(agencies: list[Agency]) -> None:
     Transit. As such, the number of agencies must be limited to 1 until these
     details are implemented.
     """
-    NUM_AGENCIES_SUPPORTED = 1
-
     require_not_none(agency_list=agencies)
     for agency in agencies:
         require_not_none(agency_in_list=agency)
@@ -125,10 +123,10 @@ def validate_and_parse_agency_timezone(raw: str, row_num: int) -> ZoneInfo:
             invalid_token=raw
         ) from e
 
-def validate_and_parse_agency_language_code(raw: str, row_num: int) -> str | None:
+def validate_and_parse_agency_language_code(raw: str, row_num: int) -> Language | None:
     """
     Throws an exception if the given string is both non-empty and not a valid
-    BCP 47 language tag; returns the trimmed string otherwise, or None if the
+    BCP 47 language tag; returns a Language object otherwise, or None if the
     trimmed string is empty.
     """
     require_not_none(raw_language_code=raw)
@@ -138,15 +136,15 @@ def validate_and_parse_agency_language_code(raw: str, row_num: int) -> str | Non
     if lang_code is None:
         return None
 
-    if not tags.check(lang_code):
+    try:
+        return validate_and_parse_language_code(lang_code)
+    except ValueError as e:
         raise GTFSAttributeError(
             file_name=AGENCY_FILE_NAME,
             column_name=AGENCY_LANGUAGE_COL_HEADER,
             row_num=row_num,
             invalid_token=raw
-        )
-
-    return lang_code
+        ) from e
 
 def validate_and_parse_agency_phone_number(raw: str, row_num: int) -> str | None:
     """
@@ -158,7 +156,7 @@ def validate_and_parse_agency_phone_number(raw: str, row_num: int) -> str | None
 
     return parse_optional_str(raw)
 
-def validate_and_parse_agency_email(raw: str, row_num: int) -> str | None:
+def validate_and_parse_agency_email(raw: str, row_num: int) -> Email | None:
     """
     Throws an exception if the given string is both non-empty and an invalid
     email address; returns an Email object otherwise, or None if the given
@@ -171,12 +169,12 @@ def validate_and_parse_agency_email(raw: str, row_num: int) -> str | None:
     if email_str is None:
         return None
 
-    if not validators.email(email_str):
+    try:
+        return validate_and_parse_email(email_str)
+    except ValueError as e:
         raise GTFSAttributeError(
             file_name=AGENCY_FILE_NAME,
             column_name=AGENCY_EMAIL_COL_HEADER,
             row_num=row_num,
             invalid_token=raw
-        )
-
-    return email_str
+        ) from e
