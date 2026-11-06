@@ -1,0 +1,4 @@
+SHAPE_ID_COL_HEADER = "shape_id"
+SHAPE_POINT_LATITUDE_COL_HEADER = "shape_pt_lat"
+SHAPE_POINT_LONGITUDE_COL_HEADER = "shape_pt_lon"
+SHAPE_POINT_SEQUENCE_COL_HEADER = "shape_pt_sequence"

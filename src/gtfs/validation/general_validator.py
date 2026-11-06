@@ -11,21 +11,21 @@ from invariant_helper import require_not_none
 from gtfs.utilities.is_hex import is_hex
 
 
-def assert_that_ids_are_unique(raw: list[str]) -> None:
+def assert_that_elements_are_unique(raw: list[str]) -> None:
     """
-    Throws an exception if the same ID appears more than once in the given
+    Throws an exception if the same string appears more than once in the given
     list.
     """
-    require_not_none(raw_id_list=raw)
-    for raw_id in raw:
-        require_not_none(raw_id_in_list=raw_id)
+    require_not_none(raw_string_list=raw)
+    for raw_str in raw:
+        require_not_none(raw_string_in_list=raw_str)
 
-    ids_seen = set()
+    seen = set()
 
-    for raw_id in raw:
-        if raw_id in ids_seen:
+    for raw_str in raw:
+        if raw_str in seen:
             raise ValueError
-        ids_seen.add(raw_id)
+        seen.add(raw_str)
 
 def validate_and_parse_nonempty_str(raw: str) -> str:
     """

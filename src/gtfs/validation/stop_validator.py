@@ -7,7 +7,7 @@ from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import parse_optional_str, validate_and_parse_latitude, \
-    validate_and_parse_longitude, validate_and_parse_url, validate_and_parse_nonempty_str, assert_that_ids_are_unique
+    validate_and_parse_longitude, validate_and_parse_url, validate_and_parse_nonempty_str, assert_that_elements_are_unique
 from invariant_helper import require_not_none
 
 
@@ -21,7 +21,7 @@ def validate_stop_collection(stops: list[Stop]) -> None:
         require_not_none(stop_in_list=stop)
 
     try:
-        assert_that_ids_are_unique([stop.id for stop in stops])
+        assert_that_elements_are_unique([stop.id for stop in stops])
     except ValueError:
         raise GTFSCollectionError(
             file_name=STOPS_FILE_NAME,

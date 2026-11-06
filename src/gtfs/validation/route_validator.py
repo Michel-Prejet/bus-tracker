@@ -10,7 +10,7 @@ from gtfs.exceptions.gtfs_row_error import GTFSInstanceError, GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_url, validate_and_parse_colour, \
     validate_and_parse_integer_str, parse_optional_str, validate_and_parse_nonempty_str, \
-    assert_that_ids_are_unique
+    assert_that_elements_are_unique
 from invariant_helper import require_not_none
 
 
@@ -24,12 +24,12 @@ def validate_route_collection(routes: list[Route]) -> None:
         require_not_none(route_in_list=route)
 
     try:
-        assert_that_ids_are_unique([route.id for route in routes])
-    except ValueError:
+        assert_that_elements_are_unique([route.id for route in routes])
+    except ValueError as e:
         raise GTFSCollectionError(
             file_name=ROUTES_FILE_NAME,
             names_of_columns_with_violated_restrictions=[ROUTE_ID_COL_HEADER]
-        )
+        ) from e
 
 def validate_route_attribute_combination(short_name: str | None,
                                          long_name: str | None,

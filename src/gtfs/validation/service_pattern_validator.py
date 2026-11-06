@@ -10,7 +10,7 @@ from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSLogicError, GTFSAttributeError
 from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_boolean_str, validate_and_parse_nonempty_str, \
-    validate_and_parse_date, assert_that_ids_are_unique
+    validate_and_parse_date, assert_that_elements_are_unique
 from invariant_helper import require_not_none
 from datetime import date
 
@@ -25,7 +25,7 @@ def validate_service_pattern_collection(service_patterns: list[ServicePattern]) 
         require_not_none(service_pattern_in_list=pattern)
 
     try:
-        assert_that_ids_are_unique([pattern.service_id for pattern in service_patterns])
+        assert_that_elements_are_unique([pattern.service_id for pattern in service_patterns])
     except ValueError:
         raise GTFSCollectionError(
             file_name=SERVICE_PATTERNS_FILE_NAME,
