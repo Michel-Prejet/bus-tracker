@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from math import isfinite
 import validators
 from language_tags import tags
@@ -6,7 +6,8 @@ from gtfs.domain.values.colour import Colour
 from gtfs.domain.values.email import Email
 from gtfs.domain.values.language import Language
 from gtfs.domain.values.url import Url
-from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH, MIN_LATITUDE, MAX_LATITUDE, MAX_LONGITUDE, MIN_LONGITUDE
+from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH, MIN_LATITUDE, MAX_LATITUDE, MAX_LONGITUDE, MIN_LONGITUDE, \
+    RAW_TIMEDELTA_NUM_TOKENS, RAW_TIMEDELTA_MAX_MINUTES, RAW_TIMEDELTA_MAX_SECONDS
 from invariant_helper import require_not_none
 from gtfs.utilities.is_hex import is_hex
 
@@ -187,6 +188,25 @@ def validate_and_parse_date(raw: str) -> date:
 
     return datetime.strptime(raw, "%Y%m%d").date()
 
+def validate_and_parse_time(raw: str) -> timedelta:
+    """
+    Throws an exception if the given string is not a valid time in HH:MM:SS
+    format; otherwise returns a timedelta object.
+    """
+    require_not_none(raw_time=raw)
+
+    tokens = raw.split(":")
+    if len(tokens) != RAW_TIMEDELTA_NUM_TOKENS:
+        raise ValueError
+
+    hours, minutes, seconds = map(validate_and_parse_integer_str, tokens)
+    if (hours < 0 or minutes < 0 or seconds < 0 or
+            minutes > RAW_TIMEDELTA_MAX_MINUTES or
+            seconds > RAW_TIMEDELTA_MAX_SECONDS):
+        raise ValueError
+
+    return timedelta(hours=hours, minutes=minutes, seconds=seconds)
+
 def validate_and_parse_language_code(raw: str) -> Language:
     """
     Throws an exception if the given string not a valid BCP 47 language tag;
@@ -214,6 +234,8 @@ def validate_and_parse_email(raw: str) -> Email:
         raise ValueError
 
     return Email(raw)
+
+
 
 
 

@@ -18,14 +18,14 @@ SERVICE_PATTERN_OVERRIDE_REQUIRED_COLUMNS = [
 
 def parse_service_pattern_overrides(
         file_name: str,
-        service_patterns: list[ServicePattern]
+        service_patterns: dict[str, ServicePattern]
 ) -> list[ServicePatternOverride]:
     """
     Creates a list of ServicePatternOverride objects from the rows in the given
     file, or throws an exception if the file or its content are invalid. If
     created successfully, the ServicePatternOverrides are added to the
-    corresponding ServicePattern objects in the given list, or an exception is
-    thrown if any foreign key is invalid.
+    corresponding ServicePattern objects in the given dictionary, or an
+    exception is thrown if any foreign key is invalid.
     """
     override_assignments: list[tuple[ServicePattern, ServicePatternOverride]] = parse_gtfs_file(
         file_name=file_name,
@@ -45,7 +45,7 @@ def parse_service_pattern_overrides(
 def _create_service_pattern_override_from_row(
         row: dict[str, str],
         row_num: int,
-        service_patterns: list[ServicePattern]
+        service_patterns: dict[str, ServicePattern]
 ) -> tuple[ServicePattern, ServicePatternOverride]:
     require_not_none(row=row, service_pattern_list=service_patterns)
     for pattern in service_patterns:

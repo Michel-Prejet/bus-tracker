@@ -1,0 +1,7 @@
+TRIP_ID_COL_HEADER = "trip_id"
+TRIP_ROUTE_ID_COL_HEADER = "route_id"
+TRIP_SERVICE_ID_COL_HEADER = "service_id"
+TRIP_HEADSIGN_COL_HEADER = "trip_headsign"
+TRIP_DIRECTION_ID_COL_HEADER = "direction_id"
+TRIP_BLOCK_ID_COL_HEADER = "block_id"
+TRIP_SHAPE_ID_COL_HEADER = "shape_id"

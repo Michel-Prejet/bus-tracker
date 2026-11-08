@@ -18,11 +18,11 @@ SHAPE_REQUIRED_COLUMNS = [
     SHAPE_POINT_SEQUENCE_COL_HEADER
 ]
 
-def parse_shapes(file_name: str) -> list[Shape]:
+def parse_shapes(file_name: str) -> dict[str, Shape]:
     """
-    Creates a list of Shape objects, composed of the Shape Point objects
-    constructed from the rows in the given file, or throws an exception if the
-    file or its contents are invalid.
+    Creates a dictionary of Shape objects (keyed by shape ID), composed of the
+    Shape Point objects constructed from the rows in the given file, or throws
+    an exception if the file or its contents are invalid.
     """
     shape_points = parse_gtfs_file(
         file_name=file_name,
@@ -34,7 +34,9 @@ def parse_shapes(file_name: str) -> list[Shape]:
 
     validate_shape_point_collection(shape_point_dict)
 
-    return _create_shape_list_from_shape_point_dict(shape_point_dict)
+    shapes = _create_shape_list_from_shape_point_dict(shape_point_dict)
+
+    return {shape.id: shape for shape in shapes}
 
 def _create_shape_point_from_row(row: dict[str, str | None], row_num: int) -> tuple[str, ShapePoint]:
     require_not_none(row=row)

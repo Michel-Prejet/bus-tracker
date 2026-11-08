@@ -17,17 +17,20 @@ ROUTE_REQUIRED_COLUMNS = [
     ROUTE_TYPE_COL_HEADER
 ]
 
-def parse_routes(file_name: str) -> list[Route]:
+def parse_routes(file_name: str) -> dict[str, Route]:
     """
-    Creates a list of Route objects from the rows in the given file, or
-    throws an exception if the file or its content are invalid.
+    Creates a dictionary of Route objects from the rows in the given file
+    (keyed by route IDs) or throws an exception if the file or its content are
+    invalid.
     """
-    return parse_gtfs_file(
+    routes = parse_gtfs_file(
         file_name=file_name,
         required_column_names=ROUTE_REQUIRED_COLUMNS,
         object_builder_from_row=_create_route_from_row,
         collection_validator=validate_route_collection
     )
+
+    return {route.id: route for route in routes}
 
 def _create_route_from_row(row: dict[str, str | None], row_num: int) -> Route:
     require_not_none(row=row)

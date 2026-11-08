@@ -23,17 +23,20 @@ SERVICE_PATTERN_REQUIRED_COLUMNS = [
     SERVICE_PATTERN_END_DATE_COL_HEADER
 ]
 
-def parse_service_patterns(file_name: str) -> list[ServicePattern]:
+def parse_service_patterns(file_name: str) -> dict[str, ServicePattern]:
     """
-    Creates a list of ServicePattern objects from the rows in the given file,
-    or throws an exception if the file or its content are invalid.
+    Creates a dictionary of ServicePattern objects (keyed by service ID) from
+    the rows in the given file, or throws an exception if the file or its
+    contents are invalid.
     """
-    return parse_gtfs_file(
+    patterns = parse_gtfs_file(
         file_name=file_name,
         required_column_names=SERVICE_PATTERN_REQUIRED_COLUMNS,
         object_builder_from_row=_create_service_pattern_from_row,
         collection_validator=validate_service_pattern_collection
     )
+
+    return {pattern.service_id: pattern for pattern in patterns}
 
 def _create_service_pattern_from_row(row: dict[str, str],
                                      row_num: int) -> ServicePattern:

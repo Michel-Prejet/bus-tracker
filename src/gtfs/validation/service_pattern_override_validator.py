@@ -41,19 +41,16 @@ def validate_service_pattern_override_collection(
 
 def validate_and_parse_override_service_id_as_foreign_key(
         raw: str,
-        service_patterns: list[ServicePattern],
+        service_patterns: dict[str, ServicePattern],
         row_num: int
 ) -> ServicePattern:
     """
     Throws an exception if given string is not a valid service ID referencing a
-    service pattern in the given list; otherwise returns the corresponding
-    service pattern from the list.
+    service pattern in the given dictionary; otherwise returns the corresponding
+    service pattern from the dictionary.
     """
-    require_not_none(raw_service_id=raw)
-    require_valid_row_num(row_num)
-
     try:
-        service_id =  validate_and_parse_nonempty_str(raw)
+        service_id = validate_and_parse_nonempty_str(raw)
     except ValueError as e:
         raise GTFSAttributeError(
             file_name=SERVICE_PATTERN_OVERRIDES_FILE_NAME,
@@ -62,17 +59,17 @@ def validate_and_parse_override_service_id_as_foreign_key(
             invalid_token=raw
         ) from e
 
-    for pattern in service_patterns:
-        if pattern.service_id == service_id:
-            return pattern
+    pattern = service_patterns.get(service_id)
+    if pattern is None:
+        raise GTFSForeignKeyError(
+            file_name=SERVICE_PATTERN_OVERRIDES_FILE_NAME,
+            column_name=OVERRIDE_SERVICE_ID_COL_HEADER,
+            row_num=row_num,
+            invalid_token=raw,
+            referenced_file_name=SERVICE_PATTERNS_FILE_NAME
+        )
 
-    raise GTFSForeignKeyError(
-        file_name=SERVICE_PATTERN_OVERRIDES_FILE_NAME,
-        column_name=OVERRIDE_SERVICE_ID_COL_HEADER,
-        row_num=row_num,
-        invalid_token=service_id,
-        referenced_file_name=SERVICE_PATTERNS_FILE_NAME
-    )
+    return pattern
 
 def validate_and_parse_override_date(raw: str, row_num: int) -> date:
     """

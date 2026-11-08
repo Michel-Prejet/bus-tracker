@@ -17,17 +17,20 @@ STOP_REQUIRED_COLUMNS = [
     STOP_LONGITUDE_COL_HEADER
 ]
 
-def parse_stops(file_name: str) -> list[Stop]:
+def parse_stops(file_name: str) -> dict[str, Stop]:
     """
-    Creates a list of stop objects from the rows in the given file, or
-    raises an exception if the file or its contents are invalid.
+    Creates a dictionary of stop objects (keyed by stop ID) from the rows in
+    the given file, or raises an exception if the file or its contents are
+    invalid.
     """
-    return parse_gtfs_file(
+    stops = parse_gtfs_file(
         file_name=file_name,
         required_column_names=STOP_REQUIRED_COLUMNS,
         object_builder_from_row=_create_stop_from_row,
         collection_validator=validate_stop_collection
     )
+
+    return {stop.id: stop for stop in stops}
 
 def _create_stop_from_row(row: dict[str, str | None], row_num: int) -> Stop:
     require_not_none(row=row)
