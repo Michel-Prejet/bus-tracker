@@ -1,5 +1,5 @@
 import validators
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_state, require_type
 
 
 class Url:
@@ -17,7 +17,8 @@ class Url:
         return self._url
 
     def _check_url(self) -> None:
-        require_not_none(url_string=self._url)
+        require_type(str, url_string=self._url)
+
         require_state(
             validators.url(self._url),
             "URL string should correspond to a valid URL."

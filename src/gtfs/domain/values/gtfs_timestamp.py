@@ -1,5 +1,5 @@
 from datetime import timedelta, date
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_state, require_type
 
 
 class GTFSTimestamp:
@@ -24,15 +24,8 @@ class GTFSTimestamp:
         return self._offset
 
     def _check_gtfs_timestamp(self) -> None:
-        require_not_none(
-            service_date=self._service_date,
-            offset=self._offset
-        )
-
-        require_state(
-            type(self._service_date) is date,
-            "Service date should be a date object (not datetime)."
-        )
+        require_type(date, service_date=self._service_date)
+        require_type(timedelta, offset=self._offset)
 
         require_state(
             self._offset >= timedelta(0),

@@ -1,5 +1,5 @@
 from gtfs.constants.gtfs_constants import MIN_LATITUDE, MAX_LATITUDE, MIN_LONGITUDE, MAX_LONGITUDE
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_not_none, require_state, require_type
 
 
 class Coordinates:
@@ -22,10 +22,8 @@ class Coordinates:
         return self._longitude
 
     def _check_coordinates(self) -> None:
-        require_not_none(
-            latitude=self._latitude,
-            longitude=self._longitude
-        )
+        require_type(float, latitude=self._latitude)
+        require_type(float, longitude=self._longitude)
 
         require_state(
             MIN_LATITUDE <= self._latitude <= MAX_LATITUDE,

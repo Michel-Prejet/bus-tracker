@@ -1,6 +1,6 @@
 from datetime import date
 from gtfs.domain.enums.service_pattern_override_type import ServicePatternOverrideType
-from invariant_helper import require_not_none
+from invariant_helper import require_type
 
 
 class ServicePatternOverride:
@@ -25,7 +25,6 @@ class ServicePatternOverride:
         return self._type
 
     def _check_service_pattern_override(self) -> None:
-        require_not_none(
-            service_pattern_override_date=self._date,
-            service_pattern_override_type=self._type
-        )
+        require_type(date, service_pattern_override_date=self._date)
+        require_type(ServicePatternOverrideType,
+                     service_pattern_override_type=self._type)

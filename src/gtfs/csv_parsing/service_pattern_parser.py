@@ -3,11 +3,9 @@ from gtfs.constants.csv_column_headers.service_pattern_headers import SERVICE_ID
     WEDNESDAY_COL_HEADER, THURSDAY_COL_HEADER, FRIDAY_COL_HEADER, SATURDAY_COL_HEADER, SUNDAY_COL_HEADER
 from gtfs.csv_parsing.csv_parsing_helper import parse_gtfs_file
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.service_pattern_validator import validate_and_parse_service_id, validate_and_parse_start_date, \
     validate_and_parse_end_date, validate_and_parse_active_weekdays, validate_service_pattern_collection, \
     validate_and_parse_service_pattern_date_range
-from invariant_helper import require_not_none
 
 
 SERVICE_PATTERN_REQUIRED_COLUMNS = [
@@ -40,9 +38,6 @@ def parse_service_patterns(file_name: str) -> dict[str, ServicePattern]:
 
 def _create_service_pattern_from_row(row: dict[str, str],
                                      row_num: int) -> ServicePattern:
-    require_not_none(row=row)
-    require_valid_row_num(row_num)
-
     service_id = validate_and_parse_service_id(row[SERVICE_ID_COL_HEADER], row_num)
 
     start_date = validate_and_parse_start_date(

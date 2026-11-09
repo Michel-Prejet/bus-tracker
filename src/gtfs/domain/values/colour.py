@@ -1,4 +1,4 @@
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_not_none, require_state, require_type
 from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH, HEX_COLOUR_BASE, HEX_COLOUR_RED_SLICE, HEX_COLOUR_GREEN_SLICE, \
     HEX_COLOUR_BLUE_SLICE, HEX_PRIMARY_COLOUR_LENGTH
 from gtfs.utilities.is_hex import is_hex
@@ -57,11 +57,13 @@ class Colour:
         )
 
     def _check_colour(self) -> None:
-        require_not_none(
+        require_type(
+            str,
             red_hexadecimal_value=self._hex_red,
             green_hexadecimal_value=self._hex_green,
             blue_hexadecimal_value=self._hex_blue
         )
+
         require_state(
             len(self._hex_red) == HEX_PRIMARY_COLOUR_LENGTH,
             f"Red hexadecimal value should contain exactly {HEX_PRIMARY_COLOUR_LENGTH} characters."

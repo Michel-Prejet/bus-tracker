@@ -1,7 +1,7 @@
 from gtfs.domain.enums.route_types import RouteType
 from gtfs.domain.values.colour import Colour
 from gtfs.domain.values.url import Url
-from invariant_helper import require_not_none, require_state, require_non_empty_str
+from invariant_helper import require_state, require_non_empty_str, require_type
 
 
 DEFAULT_ROUTE_BACKGROUND_COLOUR = Colour("FFFFFF")
@@ -11,13 +11,6 @@ class Route:
     """
     Represents a route read from the GTFS with an ID, a short and long name,
     a type, a URL, background and text colours, and a sort order.
-
-    Important GTFS invariants for this object:
-    * The short and long names cannot both be None, and whichever names are
-      present cannot be empty.
-    * If the background colour is None, it is set to the default value of FFFFFF.
-    * If the text colour is None, it is set to the default value of 000000.
-    * If the sort order is not None, it must be non-negative.
     """
 
     def __init__(
@@ -100,12 +93,17 @@ class Route:
         return self._sort_order
 
     def _check_route(self) -> None:
-        require_not_none(
-            route_id=self._route_id,
-            route_type=self._route_type,
-            route_background_colour=self._background_colour,
-            route_text_colour=self._text_colour
-        )
+        require_type(str, route_id=self._route_id)
+        require_type(str | None, route_short_name=self._short_name)
+        require_type(str | None, route_long_name=self._long_name)
+        require_type(RouteType, route_type=self._route_type)
+        require_type(Url, route_url=self._route_url)
+        require_type(Colour | None,
+                     route_background_colour=self._background_colour)
+        require_type(Colour | None,
+                     route_text_colour=self._text_colour)
+        require_type(int | None,
+                     route_sort_order=self._sort_order)
 
         require_non_empty_str(
             route_id=self._route_id

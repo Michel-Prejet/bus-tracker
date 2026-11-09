@@ -3,11 +3,9 @@ from gtfs.constants.csv_column_headers.service_pattern_override_headers import O
 from gtfs.csv_parsing.csv_parsing_helper import parse_gtfs_file
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.service_pattern.service_pattern_override import ServicePatternOverride
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.service_pattern_override_validator import validate_and_parse_override_type, \
     validate_service_pattern_override_collection, validate_and_parse_override_service_id_as_foreign_key, \
     validate_and_parse_override_date
-from invariant_helper import require_not_none
 
 
 SERVICE_PATTERN_OVERRIDE_REQUIRED_COLUMNS = [
@@ -47,11 +45,6 @@ def _create_service_pattern_override_from_row(
         row_num: int,
         service_patterns: dict[str, ServicePattern]
 ) -> tuple[ServicePattern, ServicePatternOverride]:
-    require_not_none(row=row, service_pattern_list=service_patterns)
-    for pattern in service_patterns:
-        require_not_none(service_pattern_in_list=pattern)
-    require_valid_row_num(row_num)
-
     service_id = validate_and_parse_override_service_id_as_foreign_key(
         row[OVERRIDE_SERVICE_ID_COL_HEADER],
         service_patterns,

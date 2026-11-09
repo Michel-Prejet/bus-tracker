@@ -1,5 +1,5 @@
 from gtfs.domain.values.coordinates import Coordinates
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_not_none, require_state, require_type
 
 
 class ShapePoint:
@@ -34,10 +34,8 @@ class ShapePoint:
         return self._sequence_order
 
     def _check_shape_point(self) -> None:
-        require_not_none(
-            shape_point_coordinates=self._coordinates,
-            shape_point_sequence_order=self._sequence_order,
-        )
+        require_type(Coordinates, shape_point_coordinates=self._coordinates)
+        require_type(int, shape_point_sequence_order=self._sequence_order)
 
         require_state(
             self._sequence_order >= 0,

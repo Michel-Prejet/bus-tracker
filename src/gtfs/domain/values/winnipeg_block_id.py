@@ -1,6 +1,6 @@
 from gtfs.constants.gtfs_constants import WPG_BLOCK_ID_TOKEN_DELIMITER, WPG_BLOCK_ID_NUM_TOKENS, WPG_BLOCK_ID_SERVICE_ID_TOKEN_INDEX, \
     WPG_BLOCK_ID_ROUTE_FAMILY_TOKEN_INDEX, WPG_BLOCK_ID_NUMBER_TOKEN_INDEX
-from invariant_helper import require_not_none, require_state, require_non_empty_str
+from invariant_helper import require_not_none, require_state, require_non_empty_str, require_type
 
 
 class WinnipegBlockID:
@@ -10,8 +10,6 @@ class WinnipegBlockID:
     block within its route family. When stored as a raw string, these tokens
     are delimited by a dash '-'. This object stores them separately and
     reconstructs the string in various formats.
-
-    Note that in a general GTFS, a block ID can be any string (or None).
     """
 
     def __init__(self, block_id: str):
@@ -71,11 +69,13 @@ class WinnipegBlockID:
                 f"{self._number}")
 
     def _check_winnipeg_block_id(self) -> None:
-        require_not_none(
+        require_type(
+            str,
             service_id=self._service_id,
             route_family=self._route_family,
             block_id_number=self._number
         )
+
         require_non_empty_str(
             service_id=self._service_id,
             route_family=self._route_family,

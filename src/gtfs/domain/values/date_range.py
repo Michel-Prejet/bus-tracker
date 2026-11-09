@@ -1,5 +1,5 @@
 from datetime import date
-from invariant_helper import require_not_none, require_state
+from invariant_helper import require_state, require_type
 
 
 class DateRange:
@@ -27,30 +27,11 @@ class DateRange:
         start date and less than or equal to this end date; returns False
         otherwise.
         """
-        require_not_none(
-            date=date_obj
-        )
-        require_state(
-            type(date_obj) is date,
-            "Date should be a date object (not datetime)."
-        )
-
         return self._start <= date_obj <= self._end
 
     def _check_date_range(self) -> None:
-        require_not_none(
-            start_date=self._start,
-            end_date=self._end
-        )
-
-        require_state(
-            type(self._start) is date,
-            "Start date should be a date object (not datetime)."
-        )
-        require_state(
-            type(self._end) is date,
-            "End date should be a date object (not datetime)."
-        )
+        require_type(date, start_date=self._start)
+        require_type(date, end_date=self._end)
 
         require_state(
             self._start <= self._end,

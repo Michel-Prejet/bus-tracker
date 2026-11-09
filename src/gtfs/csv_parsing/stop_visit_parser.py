@@ -15,7 +15,9 @@ from gtfs.validation.stop_visit_validator import validate_and_parse_trip_id_as_f
 STOP_VISIT_REQUIRED_COLUMNS = [
     STOP_VISIT_TRIP_ID_COL_HEADER,
     STOP_VISIT_STOP_ID_COL_HEADER,
-    STOP_VISIT_STOP_SEQUENCE_COL_HEADER
+    STOP_VISIT_STOP_SEQUENCE_COL_HEADER,
+    STOP_VISIT_ARRIVAL_TIME_COL_HEADER,
+    STOP_VISIT_DEPARTURE_TIME_COL_HEADER
 ]
 
 def parse_stop_visits(
@@ -57,18 +59,14 @@ def _create_stop_visit_from_row(
         row_num
     )
 
-    arrival_time = get_opt_attribute(
-        column_name=STOP_VISIT_ARRIVAL_TIME_COL_HEADER,
-        row=row,
-        row_num=row_num,
-        validator=validate_and_parse_stop_visit_arrival_time
+    arrival_time = validate_and_parse_stop_visit_arrival_time(
+        row[STOP_VISIT_ARRIVAL_TIME_COL_HEADER],
+        row_num
     )
 
-    departure_time = get_opt_attribute(
-        column_name=STOP_VISIT_DEPARTURE_TIME_COL_HEADER,
-        row=row,
-        row_num=row_num,
-        validator=validate_and_parse_stop_visit_departure_time
+    departure_time = validate_and_parse_stop_visit_departure_time(
+        row[STOP_VISIT_DEPARTURE_TIME_COL_HEADER],
+        row_num
     )
 
     stop = validate_and_parse_stop_id_as_foreign_key(

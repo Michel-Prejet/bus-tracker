@@ -8,10 +8,8 @@ from gtfs.domain.trip.stop_visit import StopVisit
 from gtfs.domain.trip.trip import Trip
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError, GTFSForeignKeyError, GTFSInstanceError
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
-from gtfs.validation.general_validator import validate_and_parse_nonempty_str, parse_optional_str, \
+from gtfs.validation.general_validator import validate_and_parse_nonempty_str, \
     validate_and_parse_time, validate_and_parse_integer_str, assert_that_elements_are_unique
-from invariant_helper import require_not_none
 
 
 def validate_stop_visit_collection(stop_visits: dict[Trip, list[StopVisit]]) -> None:
@@ -19,10 +17,6 @@ def validate_stop_visit_collection(stop_visits: dict[Trip, list[StopVisit]]) -> 
     Throws an exception if the same sequence order appears more than once in
     any of the lists of stop visits in the given dictionary.
     """
-    require_not_none(stop_visit_list=stop_visits)
-    for visit in stop_visits:
-        require_not_none(stop_visit_in_list=visit)
-
     try:
         for stop_visit_list in stop_visits.values():
             assert_that_elements_are_unique(
@@ -35,25 +29,21 @@ def validate_stop_visit_collection(stop_visits: dict[Trip, list[StopVisit]]) -> 
         ) from e
 
 def validate_stop_visit_attribute_combination(
-    arrival_time: timedelta | None,
-    departure_time: timedelta | None,
+    arrival_time: timedelta ,
+    departure_time: timedelta,
     row: str,
     row_num: int
 ) -> None:
     """
     Throws an exception if the given arrival time is greater than the given
-    departure time, whenever they are both not None.
+    departure time.
     """
-    require_not_none(row=row)
-    require_valid_row_num(row_num)
-
-    if arrival_time is not None and departure_time is not None:
-        if arrival_time > departure_time:
-            raise GTFSInstanceError(
-                file_name=STOP_VISITS_FILE_NAME,
-                row_num=row_num,
-                row=row
-            )
+    if arrival_time > departure_time:
+        raise GTFSInstanceError(
+            file_name=STOP_VISITS_FILE_NAME,
+            row_num=row_num,
+            row=row
+        )
 
 def validate_and_parse_trip_id_as_foreign_key(
         raw: str,
@@ -87,21 +77,13 @@ def validate_and_parse_trip_id_as_foreign_key(
 
     return trip
 
-def validate_and_parse_stop_visit_arrival_time(raw: str, row_num: int) -> timedelta | None:
+def validate_and_parse_stop_visit_arrival_time(raw: str, row_num: int) -> timedelta:
     """
-    Throws an exception if the given string is both non-empty and not a valid
-    time in HH:MM:SS format; otherwise returns a timedelta object, or None if
-    the string was empty.
+    Throws an exception if the given string is not a valid
+    time in HH:MM:SS format; otherwise returns a timedelta object.
     """
-    require_not_none(raw_arrival_time=raw)
-    require_valid_row_num(row_num)
-
-    arrival_time_str = parse_optional_str(raw)
-    if arrival_time_str is None:
-        return None
-
     try:
-        return validate_and_parse_time(arrival_time_str)
+        return validate_and_parse_time(raw)
     except ValueError as e:
         raise GTFSAttributeError(
             file_name=STOP_VISITS_FILE_NAME,
@@ -110,21 +92,13 @@ def validate_and_parse_stop_visit_arrival_time(raw: str, row_num: int) -> timede
             invalid_token=raw
         ) from e
 
-def validate_and_parse_stop_visit_departure_time(raw: str, row_num: int) -> timedelta | None:
+def validate_and_parse_stop_visit_departure_time(raw: str, row_num: int) -> timedelta:
     """
-    Throws an exception if the given string is both non-empty and not a valid
-    time in HH:MM:SS format; otherwise returns a timedelta object, or None if
-    the string was empty.
+    Throws an exception if the given string is not a valid
+    time in HH:MM:SS format; otherwise returns a timedelta object.
     """
-    require_not_none(raw_departure_time=raw)
-    require_valid_row_num(row_num)
-
-    departure_time_str = parse_optional_str(raw)
-    if departure_time_str is None:
-        return None
-
     try:
-        return validate_and_parse_time(departure_time_str)
+        return validate_and_parse_time(raw)
     except ValueError as e:
         raise GTFSAttributeError(
             file_name=STOP_VISITS_FILE_NAME,
@@ -170,9 +144,6 @@ def validate_and_parse_stop_visit_sequence_number(raw: str, row_num: int) -> int
     Throws an exception if the given string is not a non-negative integer;
     otherwise returns the value as an integer.
     """
-    require_not_none(raw_stop_sequence_number=raw)
-    require_valid_row_num(row_num)
-
     try:
         stop_sequence_number = validate_and_parse_integer_str(raw)
 

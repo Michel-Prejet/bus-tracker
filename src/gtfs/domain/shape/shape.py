@@ -1,5 +1,5 @@
 from gtfs.domain.shape.shape_point import ShapePoint
-from invariant_helper import require_not_none, require_state, require_non_empty_str
+from invariant_helper import require_not_none, require_state, require_non_empty_str, require_type
 from bisect import insort
 
 
@@ -32,32 +32,17 @@ class Shape:
         Adds a given point to this shape. A shape cannot contain two points
         with the same sequence order.
         """
-        require_not_none(shape_point=point)
-        for curr_point in self._points:
-            require_state(
-                point.sequence_order != curr_point.sequence_order,
-                "There cannot be two points in the same shape with the same sequence order."
-            )
-
         insort(self._points, point)
 
         self._check_shape()
 
     def _check_shape(self) -> None:
-        require_not_none(
-            shape_id=self._shape_id,
-            shape_point_list=self._points
-        )
-
-        require_non_empty_str(
-            shape_id=self._shape_id
-        )
+        require_type(str, shape_id=self._shape_id)
+        require_type(list, shape_point_list=self._points)
 
         prev: ShapePoint | None = None
         for point in self._points:
-            require_not_none(
-                shape_point_in_list=point
-            )
+            require_type(ShapePoint, shape_point_in_list=point)
 
             if prev is not None:
                 require_state(
@@ -65,3 +50,7 @@ class Shape:
                     "Shape point list should be sorted by strictly increasing sequence order values."
                 )
             prev = point
+
+        require_non_empty_str(
+            shape_id=self._shape_id
+        )

@@ -7,10 +7,8 @@ from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.service_pattern.service_pattern_override import ServicePatternOverride
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError, GTFSForeignKeyError
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_date, validate_and_parse_integer_str, \
     validate_and_parse_nonempty_str
-from invariant_helper import require_not_none
 
 
 def validate_service_pattern_override_collection(
@@ -20,13 +18,6 @@ def validate_service_pattern_override_collection(
     Throws an exception if the same (serviceID, overrideDate) tuple appears more
     than once in the given list.
     """
-    require_not_none(service_pattern_override_dictionary=override_assignments)
-    for pattern, override in override_assignments:
-        require_not_none(
-            service_pattern_in_dictionary=pattern,
-            service_pattern_override_in_dictionary=override
-        )
-
     keys_seen: set[tuple[str, date]] = set()
 
     for pattern, override in override_assignments:
@@ -76,9 +67,6 @@ def validate_and_parse_override_date(raw: str, row_num: int) -> date:
     Throws an exception if the given string is not a valid date in
     YYYYMMDD format; returns a date object otherwise.
     """
-    require_not_none(raw_override_date=raw)
-    require_valid_row_num(row_num)
-
     try:
         return validate_and_parse_date(raw)
     except ValueError as e:
@@ -95,9 +83,6 @@ def validate_and_parse_override_type(raw: str, row_num: int) -> ServicePatternOv
     to a valid ServicePatternOverrideType; otherwise, the corresponding
     ServicePatternOverrideType object is returned.
     """
-    require_not_none(raw_override_type=raw)
-    require_valid_row_num(row_num)
-
     try:
         return ServicePatternOverrideType(validate_and_parse_integer_str(raw))
     except ValueError as e:

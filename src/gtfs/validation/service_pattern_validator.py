@@ -8,10 +8,8 @@ from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.values.date_range import DateRange
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_row_error import GTFSLogicError, GTFSAttributeError
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.general_validator import validate_and_parse_boolean_str, validate_and_parse_nonempty_str, \
     validate_and_parse_date, assert_that_elements_are_unique
-from invariant_helper import require_not_none
 from datetime import date
 
 
@@ -20,10 +18,6 @@ def validate_service_pattern_collection(service_patterns: list[ServicePattern]) 
     Throws an exception if the same service pattern ID appears more than once
     in the given list of service patterns.
     """
-    require_not_none(service_pattern_list=service_patterns)
-    for pattern in service_patterns:
-        require_not_none(service_pattern_in_list=pattern)
-
     try:
         assert_that_elements_are_unique([pattern.service_id for pattern in service_patterns])
     except ValueError:
@@ -37,9 +31,6 @@ def validate_and_parse_service_id(raw: str, row_num: int) -> str:
     Throws an exception if the given string is empty or only whitespace.
     Otherwise, the trimmed string is returned.
     """
-    require_not_none(raw_service_id=raw)
-    require_valid_row_num(row_num)
-
     try:
         return validate_and_parse_nonempty_str(raw)
     except ValueError as e:
@@ -65,11 +56,6 @@ def validate_and_parse_active_weekdays(weekday_flags_raw: RawWeekdayFlags,
     are invalid; otherwise, returns a list of weekdays containing each
     day of the week associated with a "1" flag.
     """
-    require_not_none(collection_of_weekday_flags=weekday_flags_raw)
-    for flag in weekday_flags_raw.values():
-        require_not_none(value_in_collection_of_weekday_flags=flag)
-    require_valid_row_num(row_num)
-
     active_weekdays: set[DayOfWeek] = set()
 
     _validate_flag_and_append_weekday_if_true(
@@ -154,12 +140,6 @@ def validate_and_parse_service_pattern_date_range(start_date: date, end_date: da
     Throws an exception if the given start date comes before the given end
     date; otherwise returns a DateRange object.
     """
-    require_not_none(
-        start_date=start_date,
-        end_date=end_date
-    )
-    require_valid_row_num(row_num)
-
     if start_date > end_date:
         raise GTFSLogicError(
             file_name=SERVICE_PATTERNS_FILE_NAME,
@@ -177,9 +157,6 @@ def validate_and_parse_start_date(raw: str, row_num: int) -> date:
     Throws an exception if the given string is not a valid date in
     YYYYMMDD format; returns a date object otherwise.
     """
-    require_not_none(raw_start_date=raw)
-    require_valid_row_num(row_num)
-
     try:
         return validate_and_parse_date(raw)
     except ValueError as e:
@@ -195,9 +172,6 @@ def validate_and_parse_end_date(raw: str, row_num: int) -> date:
     Throws an exception if the given string is not a valid date in
     YYYYMMDD format; returns a date object otherwise.
     """
-    require_not_none(raw_end_date=raw)
-    require_valid_row_num(row_num)
-
     try:
         return validate_and_parse_date(raw)
     except ValueError as e:

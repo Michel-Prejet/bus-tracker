@@ -1,6 +1,6 @@
 from gtfs.domain.values.coordinates import Coordinates
 from gtfs.domain.values.url import Url
-from invariant_helper import require_not_none, require_non_empty_str
+from invariant_helper import require_not_none, require_non_empty_str, require_type
 
 
 class Stop:
@@ -53,11 +53,11 @@ class Stop:
         return self._stop_url
 
     def _check_stop(self) -> None:
-        require_not_none(
-            stop_id=self._stop_id,
-            stop_name=self._name,
-            stop_coordinates=self._coordinates
-        )
+        require_type(str, stop_id=self._stop_id)
+        require_type(str | None, stop_code=self._stop_code)
+        require_type(str, stop_name=self._name)
+        require_type(Coordinates, stop_coordinates=self._coordinates)
+        require_type(Url | None, stop_url=self._stop_url)
 
         require_non_empty_str(stop_id=self._stop_id)
 

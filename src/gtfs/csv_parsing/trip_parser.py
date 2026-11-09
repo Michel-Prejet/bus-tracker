@@ -6,18 +6,17 @@ from gtfs.domain.route import Route
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.shape.shape import Shape
 from gtfs.domain.trip.trip import Trip
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.trip_validator import validate_and_parse_trip_id, validate_and_parse_trip_headsign, \
     validate_and_parse_winnipeg_block_id, validate_and_parse_trip_direction, validate_and_parse_route_id_as_foreign_key, \
     validate_and_parse_service_id_as_foreign_key, validate_and_parse_shape_id_as_foreign_key, validate_trip_collection
-from invariant_helper import require_not_none
 
 
 TRIPS_REQUIRED_COLUMNS = [
     TRIP_ID_COL_HEADER,
     TRIP_ROUTE_ID_COL_HEADER,
     TRIP_SERVICE_ID_COL_HEADER,
-    TRIP_SHAPE_ID_COL_HEADER
+    TRIP_SHAPE_ID_COL_HEADER,
+    TRIP_BLOCK_ID_COL_HEADER
 ]
 
 def parse_trips(
@@ -47,20 +46,6 @@ def _create_trip_from_row(
         service_patterns: dict[str, ServicePattern],
         shapes: dict[str, Shape]
 ) -> Trip:
-    require_not_none(
-        row=row,
-        route_list=routes,
-        service_pattern_list=service_patterns,
-        shape_list=shapes
-    )
-    require_valid_row_num(row_num)
-    for route in routes:
-        require_not_none(route_in_list=route)
-    for sp in service_patterns:
-        require_not_none(service_pattern_in_list=sp)
-    for shape in shapes:
-        require_not_none(shape_in_list=shape)
-
     trip_id = validate_and_parse_trip_id(row[TRIP_ID_COL_HEADER], row_num)
 
     headsign = get_opt_attribute(
@@ -70,11 +55,9 @@ def _create_trip_from_row(
         validator=validate_and_parse_trip_headsign
     )
 
-    block = get_opt_attribute(
-        column_name=TRIP_BLOCK_ID_COL_HEADER,
-        row=row,
-        row_num=row_num,
-        validator=validate_and_parse_winnipeg_block_id
+    block = validate_and_parse_winnipeg_block_id(
+        row[TRIP_BLOCK_ID_COL_HEADER],
+        row_num,
     )
 
     direction = get_opt_attribute(

@@ -3,11 +3,9 @@ from gtfs.constants.csv_column_headers.stop_headers import STOP_ID_COL_HEADER, S
 from gtfs.csv_parsing.csv_parsing_helper import parse_gtfs_file, get_opt_attribute
 from gtfs.domain.stop import Stop
 from gtfs.domain.values.coordinates import Coordinates
-from gtfs.utilities.require_valid_row_num import require_valid_row_num
 from gtfs.validation.stop_validator import validate_stop_collection, validate_and_parse_stop_id, \
     validate_and_parse_stop_code, validate_and_parse_stop_name, validate_and_parse_stop_latitude, \
     validate_and_parse_stop_longitude, validate_and_parse_stop_url
-from invariant_helper import require_not_none
 
 
 STOP_REQUIRED_COLUMNS = [
@@ -33,9 +31,6 @@ def parse_stops(file_name: str) -> dict[str, Stop]:
     return {stop.id: stop for stop in stops}
 
 def _create_stop_from_row(row: dict[str, str | None], row_num: int) -> Stop:
-    require_not_none(row=row)
-    require_valid_row_num(row_num)
-
     stop_id = validate_and_parse_stop_id(row[STOP_ID_COL_HEADER], row_num)
 
     stop_code = get_opt_attribute(
