@@ -1,7 +1,7 @@
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_file_error import GTFSFileError, GTFSFileNotFoundError, EmptyGTFSFileError, \
     MissingGTFSTokenError, MissingGTFSFileColumnError, DuplicateGTFSFileColumnError, GTFSFileColumnError
-from gtfs.exceptions.gtfs_row_error import GTFSRowError, GTFSAttributeError, GTFSLogicError, GTFSInstanceError, \
+from gtfs.exceptions.gtfs_row_error import GTFSRowError, GTFSAttributeError, GTFSInstanceError, \
     GTFSForeignKeyError
 
 
@@ -57,12 +57,6 @@ def _get_err_msg_for_gtfs_row_error(e: GTFSRowError) -> str:
                 f"Object construction failed on row {e.row_num} of "
                 f"'{e.file_name}' due to the invalid token '{e.invalid_token}' "
                 f"in column '{e.column_name}'."
-            )
-        case GTFSLogicError():
-            return (
-                f"Object construction failed on row {e.row_num} of "
-                f"'{e.file_name}' due to an illogical combination of attributes:"
-                f"\n{e.col_names_and_invalid_tokens}"
             )
         case GTFSInstanceError():
             return (

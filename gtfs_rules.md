@@ -63,6 +63,7 @@ stops:
 required.
 * `stop_id` cannot be empty or only whitespace.
 * `stop_name` cannot be empty or only whitespace.
+* If present, `stop_code` cannot be empty or only whitespace.
 * If present, `stop_url` must be a valid URL according to the 
 `validators` package.
 * `stop_lat` must be a floating point value in the interval [-90, 90].
@@ -91,6 +92,7 @@ enforced on service pattern overrides:
 * `service_id` cannot be empty or only whitespace.
 * `service_id` must correspond to a service ID in `calendar.txt`.
 * `date` must be in YYYYMMDD format.
+* `exception_type` must be 1 (service added) or 2 (service removed).
 * At most one service pattern override can be associated with the same date for
 the same service pattern.
 
@@ -107,7 +109,7 @@ required.
 * `shape_pt_sequence` must be unique within the same shape.
 * No two shapes can share the same `shape_id`.
 
-# Stop Visit
+## Stop Visit
 
 Stop visit objects are parsed from `stop_times.txt`. The following rules are
 enforced on stop visits:
@@ -125,7 +127,7 @@ The `arrival_time` and `departure_time` fields are not strictly required by
 official GTFS rules, but they are crucial to the purpose of this tracker and
 have historically been included in Winnipeg Transit's feed.
 
-# Trip
+## Trip
 
 Trip objects are parsed from `trips.txt`. The following rules are enforced on
 trips:
@@ -133,7 +135,6 @@ trips:
 * `trip_id` cannot be empty or only whitespace.
 * If present, `trip_headsign` cannot be empty or only whitespace.
 * `route_id` must correspond to a route ID in `routes.txt`.
-* `stop_id` must correspond to a stop ID in `stops.txt`.
 * `service_id` must correspond to a service ID in `calendar.txt`.
 * If present, `shape_id` must correspond to a shape ID in `shapes.txt`.
 * If present, `direction_id` must be 0 or 1.

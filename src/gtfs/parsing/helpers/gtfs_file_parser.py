@@ -1,6 +1,6 @@
-from typing import Callable
+from typing import Callable, Any
 from gtfs.exceptions.gtfs_file_error import MissingGTFSTokenError
-from gtfs.validation.gtfs_file_opener import GTFSFileOpener
+from gtfs.parsing.helpers.gtfs_file_opener import GTFSFileOpener
 
 
 def parse_gtfs_file[T](
@@ -29,24 +29,6 @@ def parse_gtfs_file[T](
             collection_validator(objects)
 
         return objects
-
-def get_opt_attribute[T](
-        column_name: str,
-        row: dict[str, str],
-        row_num: int,
-        validator: Callable[[str, int], T]
-) -> T | None:
-    """
-    Returns the parsed attribute in the given column of the given row,
-    or None if the column doesn't exist. Exceptions may be thrown on
-    invalid inputs when calling the validator.
-    """
-    token_raw = row.get(column_name)
-
-    if token_raw is None:
-        return None
-
-    return validator(token_raw, row_num)
 
 def assert_no_missing_tokens_in_row(
         row: dict[str, str | None],

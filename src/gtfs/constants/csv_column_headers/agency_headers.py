@@ -1,6 +1,6 @@
 AGENCY_ID_COL_HEADER = "agency_id"
 AGENCY_NAME_COL_HEADER = "agency_name"
-AGENCY_URL_COL_HEADER = "agency_url"
+AGENCY_URL_COL_HEADER: str = "agency_url"
 AGENCY_TIMEZONE_COL_HEADER = "agency_timezone"
 AGENCY_LANGUAGE_COL_HEADER = "agency_lang"
 AGENCY_PHONE_COL_HEADER = "agency_phone"

@@ -1,21 +1,24 @@
 from gtfs.constants.csv_column_headers.trips_headers import TRIP_ID_COL_HEADER, TRIP_HEADSIGN_COL_HEADER, \
     TRIP_BLOCK_ID_COL_HEADER, TRIP_DIRECTION_ID_COL_HEADER, TRIP_ROUTE_ID_COL_HEADER, TRIP_SERVICE_ID_COL_HEADER, \
     TRIP_SHAPE_ID_COL_HEADER
-from gtfs.csv_parsing.csv_parsing_helper import get_opt_attribute, parse_gtfs_file
+from gtfs.constants.gtfs_constants import TRIPS_FILE_NAME, ROUTES_FILE_NAME, SERVICE_PATTERNS_FILE_NAME, \
+    SHAPES_FILE_NAME
+from gtfs.parsing.helpers.gtfs_file_parser import parse_gtfs_file
 from gtfs.domain.route import Route
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.shape.shape import Shape
 from gtfs.domain.trip.trip import Trip
-from gtfs.validation.trip_validator import validate_and_parse_trip_id, validate_and_parse_trip_headsign, \
-    validate_and_parse_winnipeg_block_id, validate_and_parse_trip_direction, validate_and_parse_route_id_as_foreign_key, \
-    validate_and_parse_service_id_as_foreign_key, validate_and_parse_shape_id_as_foreign_key, validate_trip_collection
+from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
+from gtfs.parsing.validation.collection_validator import validate_trips
+from gtfs.parsing.value_parsing.direction_parser import parse_direction_id
+from gtfs.parsing.value_parsing.primitive_parser import parse_string
+from gtfs.parsing.value_parsing.wpg_block_id_parser import parse_winnipeg_block_id
 
 
 TRIPS_REQUIRED_COLUMNS = [
     TRIP_ID_COL_HEADER,
     TRIP_ROUTE_ID_COL_HEADER,
     TRIP_SERVICE_ID_COL_HEADER,
-    TRIP_SHAPE_ID_COL_HEADER,
     TRIP_BLOCK_ID_COL_HEADER
 ]
 
@@ -34,7 +37,7 @@ def parse_trips(
         required_column_names=TRIPS_REQUIRED_COLUMNS,
         object_builder_from_row=(lambda row, row_num:
         _create_trip_from_row(row, row_num, routes, service_patterns, shapes)),
-        collection_validator=validate_trip_collection
+        collection_validator=validate_trips
     )
 
     return {trip.id: trip for trip in trips}
@@ -46,46 +49,54 @@ def _create_trip_from_row(
         service_patterns: dict[str, ServicePattern],
         shapes: dict[str, Shape]
 ) -> Trip:
-    trip_id = validate_and_parse_trip_id(row[TRIP_ID_COL_HEADER], row_num)
+    parser = RowParsingFactory(
+        file_name=TRIPS_FILE_NAME,
+        row=row,
+        row_num=row_num
+    )
 
-    headsign = get_opt_attribute(
+    trip_id = parser.get_attribute(
+        column_name=TRIP_ID_COL_HEADER,
+        parser=parse_string
+    )
+
+    headsign = parser.get_attribute(
         column_name=TRIP_HEADSIGN_COL_HEADER,
-        row=row,
-        row_num=row_num,
-        validator=validate_and_parse_trip_headsign
+        parser=parse_string,
+        optional=True
     )
 
-    block = validate_and_parse_winnipeg_block_id(
-        row[TRIP_BLOCK_ID_COL_HEADER],
-        row_num,
+    block = parser.get_attribute(
+        column_name=TRIP_BLOCK_ID_COL_HEADER,
+        parser=parse_winnipeg_block_id
     )
 
-    direction = get_opt_attribute(
+    direction = parser.get_attribute(
         column_name=TRIP_DIRECTION_ID_COL_HEADER,
-        row=row,
-        row_num=row_num,
-        validator=validate_and_parse_trip_direction
+        parser=parse_direction_id,
+        optional=True
     )
 
-    route = validate_and_parse_route_id_as_foreign_key(
-        row[TRIP_ROUTE_ID_COL_HEADER],
-        routes,
-        row_num
+    route = parser.get_attribute_as_foreign_key(
+        column_name=TRIP_ROUTE_ID_COL_HEADER,
+        referenced_objs=routes,
+        referenced_file_name=ROUTES_FILE_NAME,
+        parser=parse_string
     )
 
-    service_pattern = validate_and_parse_service_id_as_foreign_key(
-        row[TRIP_SERVICE_ID_COL_HEADER],
-        service_patterns,
-        row_num
+    service_pattern = parser.get_attribute_as_foreign_key(
+        column_name=TRIP_SERVICE_ID_COL_HEADER,
+        referenced_objs=service_patterns,
+        referenced_file_name=SERVICE_PATTERNS_FILE_NAME,
+        parser=parse_string
     )
 
-    shape = get_opt_attribute(
+    shape = parser.get_attribute_as_foreign_key(
         column_name=TRIP_SHAPE_ID_COL_HEADER,
-        row=row,
-        row_num=row_num,
-        validator=(lambda raw, num:
-            validate_and_parse_shape_id_as_foreign_key(raw, shapes, num)
-        )
+        referenced_objs=shapes,
+        referenced_file_name=SHAPES_FILE_NAME,
+        parser=parse_string,
+        optional=True
     )
 
     return Trip(

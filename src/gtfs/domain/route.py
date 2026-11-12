@@ -97,7 +97,7 @@ class Route:
         require_type(str | None, route_short_name=self._short_name)
         require_type(str | None, route_long_name=self._long_name)
         require_type(RouteType, route_type=self._route_type)
-        require_type(Url, route_url=self._route_url)
+        require_type(Url | None, route_url=self._route_url)
         require_type(Colour | None,
                      route_background_colour=self._background_colour)
         require_type(Colour | None,

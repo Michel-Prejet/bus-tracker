@@ -1,12 +1,15 @@
 from gtfs.constants.csv_column_headers.shapes_headers import SHAPE_ID_COL_HEADER, SHAPE_POINT_LATITUDE_COL_HEADER, \
     SHAPE_POINT_LONGITUDE_COL_HEADER, SHAPE_POINT_SEQUENCE_COL_HEADER
-from gtfs.csv_parsing.csv_parsing_helper import parse_gtfs_file
+from gtfs.constants.gtfs_constants import SHAPES_FILE_NAME
+from gtfs.parsing.helpers.gtfs_file_parser import parse_gtfs_file
 from gtfs.domain.shape.shape import Shape
 from gtfs.domain.shape.shape_point import ShapePoint
 from gtfs.domain.values.coordinates import Coordinates
-from gtfs.validation.shape_validator import validate_and_parse_shape_id, validate_and_parse_shape_point_latitude, \
-    validate_and_parse_shape_point_sequence_order, \
-    validate_and_parse_shape_point_longitude, validate_shape_point_collection
+from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
+from gtfs.parsing.validation.attribute_validator import assert_nonnegative
+from gtfs.parsing.validation.collection_validator import validate_shape_points
+from gtfs.parsing.value_parsing.coordinate_parser import parse_latitude, parse_longitude
+from gtfs.parsing.value_parsing.primitive_parser import parse_string, parse_integer
 
 
 SHAPE_REQUIRED_COLUMNS = [
@@ -30,7 +33,7 @@ def parse_shapes(file_name: str) -> dict[str, Shape]:
 
     shape_point_dict = _create_shape_point_dict_from_tuples(shape_points)
 
-    validate_shape_point_collection(shape_point_dict)
+    validate_shape_points(shape_point_dict)
 
     shapes = _create_shape_list_from_shape_point_dict(shape_point_dict)
 
@@ -40,19 +43,32 @@ def _create_shape_point_from_row(
         row: dict[str, str | None],
         row_num: int
 ) -> tuple[str, ShapePoint]:
-    shape_id = validate_and_parse_shape_id(row[SHAPE_ID_COL_HEADER], row_num)
+    parser = RowParsingFactory(
+        file_name=SHAPES_FILE_NAME,
+        row=row,
+        row_num=row_num
+    )
+
+    shape_id = parser.get_attribute(
+        column_name=SHAPE_ID_COL_HEADER,
+        parser=parse_string
+    )
 
     coordinates = Coordinates(
-        validate_and_parse_shape_point_latitude(
-            row[SHAPE_POINT_LATITUDE_COL_HEADER], row_num
+        parser.get_attribute(
+            column_name=SHAPE_POINT_LATITUDE_COL_HEADER,
+            parser=parse_latitude
         ),
-        validate_and_parse_shape_point_longitude(
-            row[SHAPE_POINT_LONGITUDE_COL_HEADER], row_num
+        parser.get_attribute(
+            column_name=SHAPE_POINT_LONGITUDE_COL_HEADER,
+            parser=parse_longitude
         )
     )
 
-    sequence_order = validate_and_parse_shape_point_sequence_order(
-        row[SHAPE_POINT_SEQUENCE_COL_HEADER], row_num
+    sequence_order = parser.get_attribute(
+        column_name=SHAPE_POINT_SEQUENCE_COL_HEADER,
+        parser=parse_integer,
+        validator=assert_nonnegative
     )
 
     return shape_id, ShapePoint(coordinates, sequence_order)

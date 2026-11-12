@@ -1,11 +1,14 @@
 from gtfs.constants.csv_column_headers.service_pattern_override_headers import OVERRIDE_SERVICE_ID_COL_HEADER, \
     OVERRIDE_DATE_COL_HEADER, OVERRIDE_TYPE_COL_HEADER
-from gtfs.csv_parsing.csv_parsing_helper import parse_gtfs_file
+from gtfs.constants.gtfs_constants import SERVICE_PATTERN_OVERRIDES_FILE_NAME, SERVICE_PATTERNS_FILE_NAME
+from gtfs.parsing.helpers.gtfs_file_parser import parse_gtfs_file
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.service_pattern.service_pattern_override import ServicePatternOverride
-from gtfs.validation.service_pattern_override_validator import validate_and_parse_override_type, \
-    validate_service_pattern_override_collection, validate_and_parse_override_service_id_as_foreign_key, \
-    validate_and_parse_override_date
+from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
+from gtfs.parsing.validation.collection_validator import validate_service_pattern_overrides
+from gtfs.parsing.value_parsing.datetime_parser import parse_date
+from gtfs.parsing.value_parsing.enum_parser import parse_override_type
+from gtfs.parsing.value_parsing.primitive_parser import parse_string
 
 
 SERVICE_PATTERN_OVERRIDE_REQUIRED_COLUMNS = [
@@ -32,7 +35,7 @@ def parse_service_pattern_overrides(
             lambda row, row_num:
             _create_service_pattern_override_from_row(row, row_num, service_patterns)
         ),
-        collection_validator=validate_service_pattern_override_collection
+        collection_validator=validate_service_pattern_overrides
     )
 
     for pattern, override in override_assignments:
@@ -41,24 +44,31 @@ def parse_service_pattern_overrides(
     return [override for pattern, override in override_assignments]
 
 def _create_service_pattern_override_from_row(
-        row: dict[str, str],
+        row: dict[str, str | None],
         row_num: int,
         service_patterns: dict[str, ServicePattern]
 ) -> tuple[ServicePattern, ServicePatternOverride]:
-    service_id = validate_and_parse_override_service_id_as_foreign_key(
-        row[OVERRIDE_SERVICE_ID_COL_HEADER],
-        service_patterns,
-        row_num
+    parser = RowParsingFactory(
+        file_name=SERVICE_PATTERN_OVERRIDES_FILE_NAME,
+        row=row,
+        row_num=row_num
     )
 
-    override_date = validate_and_parse_override_date(
-        row[OVERRIDE_DATE_COL_HEADER],
-        row_num
+    service_pattern = parser.get_attribute_as_foreign_key(
+        column_name=OVERRIDE_SERVICE_ID_COL_HEADER,
+        referenced_objs=service_patterns,
+        referenced_file_name=SERVICE_PATTERNS_FILE_NAME,
+        parser=parse_string
     )
 
-    override_type = validate_and_parse_override_type(
-        row[OVERRIDE_TYPE_COL_HEADER],
-        row_num
+    override_date = parser.get_attribute(
+        column_name=OVERRIDE_DATE_COL_HEADER,
+        parser=parse_date
     )
 
-    return service_id, ServicePatternOverride(override_date, override_type)
+    override_type = parser.get_attribute(
+        column_name=OVERRIDE_TYPE_COL_HEADER,
+        parser=parse_override_type
+    )
+
+    return service_pattern, ServicePatternOverride(override_date, override_type)
