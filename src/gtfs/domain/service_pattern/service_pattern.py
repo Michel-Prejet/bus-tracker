@@ -34,6 +34,22 @@ class ServicePattern:
     def service_id(self) -> str:
         return self._service_id
 
+    @property
+    def weekdays_active(self) -> set[DayOfWeek]:
+        return self._weekdays_active
+
+    @property
+    def active_period(self) -> DateRange:
+        return self._active_period
+
+    @property
+    def overrides(self) -> list[ServicePatternOverride]:
+        """
+        Returns a shallow copy of the list of service pattern overrides for
+        this service pattern.
+        """
+        return list(self._overrides.values()).copy()
+
     def is_active(self, timestamp: GTFSTimestamp) -> bool:
         """
         Returns True if this service pattern is applicable during the
