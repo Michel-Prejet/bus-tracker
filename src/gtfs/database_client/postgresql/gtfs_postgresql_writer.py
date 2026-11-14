@@ -1,4 +1,4 @@
-from database_connection import connection
+from psycopg import Connection
 from gtfs.database_client.gtfs_writer import GTFSWriter
 from gtfs.domain.agency import Agency
 from gtfs.domain.enums.day_of_week import DayOfWeek
@@ -15,8 +15,8 @@ class GTFSPostgreSQLWriter(GTFSWriter):
     Opens a connection to the PostgreSQL database and writes GTFS objects.
     """
 
-    def __init__(self):
-        self._db = connection()
+    def __init__(self, db: Connection):
+        self._db = db
 
     def __enter__(self):
         self._db.__enter__()

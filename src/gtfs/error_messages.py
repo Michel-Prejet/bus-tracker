@@ -1,3 +1,4 @@
+import psycopg
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_file_error import GTFSFileError, GTFSFileNotFoundError, EmptyGTFSFileError, \
     MissingGTFSTokenError, MissingGTFSFileColumnError, DuplicateGTFSFileColumnError, GTFSFileColumnError
@@ -9,7 +10,6 @@ def get_err_msg(e: Exception) -> str:
     """
     Returns the error message associated with the given exception type.
     """
-    from gtfs.exceptions.gtfs_row_error import GTFSRowError
     match e:
         case GTFSFileError():
             return _get_err_msg_for_gtfs_file_error(e)
@@ -23,8 +23,10 @@ def get_err_msg(e: Exception) -> str:
                 f"Problematic values could be found in the column(s): "
                 f"{", ".join(map(str, e.violated_column_names))}."
             )
+        case psycopg.Error():
+            return _get_err_msg_for_db_error(e)
 
-    return f"An unexpected error occurred: {e}"
+    return f"An unexpected error occurred ({type(e).__name__}): {e}"
 
 def _get_err_msg_for_gtfs_file_error(e: GTFSFileError) -> str:
     match e:
@@ -66,3 +68,16 @@ def _get_err_msg_for_gtfs_row_error(e: GTFSRowError) -> str:
             )
 
     return f"Row {e.row_num} in '{e.file_name}' caused an unspecified error."
+
+def _get_err_msg_for_db_error(e: psycopg.Error) -> str:
+    match e:
+        case psycopg.IntegrityError():
+            return f"Database integrity constraint violated: {e}"
+        case psycopg.OperationalError():
+            return f"Database operation failed: {e}"
+        case psycopg.ProgrammingError():
+            return f"Database SQL error: {e}"
+        case psycopg.DatabaseError():
+            return f"Database error: {e}"
+        case psycopg.Error():
+            return f"PostgreSQL client error: {e}"
