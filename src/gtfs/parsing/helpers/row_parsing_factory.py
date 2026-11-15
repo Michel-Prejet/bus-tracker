@@ -2,7 +2,7 @@ from typing import Callable
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError, GTFSInstanceError, GTFSForeignKeyError
 from gtfs.exceptions.domain_error import DomainError
 from gtfs.exceptions.value_parsing_error import ValueParsingError
-from gtfs.utilities.dict_reader_row_to_csv import dict_reader_row_to_csv
+from utilities.dict_reader_row_to_csv import dict_reader_row_to_csv
 
 
 class RowParsingFactory:

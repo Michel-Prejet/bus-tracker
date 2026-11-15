@@ -24,7 +24,7 @@ from gtfs.parsing.csv_parsing.stop_visit_parser import parse_stop_visits
 from gtfs.parsing.csv_parsing.trip_parser import parse_trips
 
 
-def load_gtfs(csv_input_folder: Path) -> None:
+def parse_gtfs(csv_input_folder: Path) -> None:
     """
     Parses the GTFS feed from the CSV files in the given directory then writes
     it to the database.
