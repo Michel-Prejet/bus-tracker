@@ -3,9 +3,9 @@ from gtfs.constants.csv_column_headers.stop_headers import STOP_ID_COL_HEADER, S
 from gtfs.constants.gtfs_constants import STOPS_FILE_NAME
 from gtfs.parsing.helpers.gtfs_file_parser import parse_gtfs_file
 from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
-from gtfs.parsing.value_parsing.coordinate_parser import parse_latitude, parse_longitude
-from gtfs.parsing.value_parsing.primitive_parser import parse_string
-from gtfs.parsing.value_parsing.url_parser import parse_url
+from global_packages.value_parsing.coordinate_parser import parse_latitude, parse_longitude
+from global_packages.value_parsing.primitive_parser import parse_string
+from global_packages.value_parsing.url_parser import parse_url
 from gtfs.domain.stop import Stop
 from gtfs.domain.values.coordinates import Coordinates
 from gtfs.parsing.validation.collection_validator import validate_stops

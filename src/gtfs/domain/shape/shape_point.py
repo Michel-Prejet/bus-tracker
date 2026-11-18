@@ -1,5 +1,5 @@
 from gtfs.domain.values.coordinates import Coordinates
-from invariant_helper import require_not_none, require_state, require_type
+from global_packages.utilities.invariant_helper import require_not_none, require_state, require_type
 
 
 class ShapePoint:

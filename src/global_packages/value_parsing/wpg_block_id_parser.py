@@ -1,7 +1,7 @@
 from gtfs.constants.gtfs_constants import WPG_BLOCK_ID_TOKEN_DELIMITER, WPG_BLOCK_ID_NUM_TOKENS
 from gtfs.domain.values.winnipeg_block_id import WinnipegBlockID
-from gtfs.exceptions.value_parsing_error import ValueParsingError
-from gtfs.parsing.value_parsing.primitive_parser import parse_integer
+from global_packages.exceptions.value_parsing_error import ValueParsingError
+from global_packages.value_parsing.primitive_parser import parse_integer
 
 
 def parse_winnipeg_block_id(raw: str) -> WinnipegBlockID:

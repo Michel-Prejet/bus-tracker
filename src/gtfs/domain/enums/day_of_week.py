@@ -1,6 +1,6 @@
 from datetime import date
 from enum import Enum
-from invariant_helper import require_not_none
+from global_packages.utilities.invariant_helper import require_not_none
 
 
 class DayOfWeek(Enum):

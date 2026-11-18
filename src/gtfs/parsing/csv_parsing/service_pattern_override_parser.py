@@ -6,9 +6,9 @@ from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.domain.service_pattern.service_pattern_override import ServicePatternOverride
 from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
 from gtfs.parsing.validation.collection_validator import validate_service_pattern_overrides
-from gtfs.parsing.value_parsing.datetime_parser import parse_date
-from gtfs.parsing.value_parsing.enum_parser import parse_override_type
-from gtfs.parsing.value_parsing.primitive_parser import parse_string
+from global_packages.value_parsing.datetime_parser import parse_date
+from global_packages.value_parsing.enum_parser import parse_override_type
+from global_packages.value_parsing.primitive_parser import parse_string
 
 
 SERVICE_PATTERN_OVERRIDE_REQUIRED_COLUMNS = [

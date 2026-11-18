@@ -8,8 +8,8 @@ from gtfs.domain.values.coordinates import Coordinates
 from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
 from gtfs.parsing.validation.attribute_validator import assert_nonnegative
 from gtfs.parsing.validation.collection_validator import validate_shape_points
-from gtfs.parsing.value_parsing.coordinate_parser import parse_latitude, parse_longitude
-from gtfs.parsing.value_parsing.primitive_parser import parse_string, parse_integer
+from global_packages.value_parsing.coordinate_parser import parse_latitude, parse_longitude
+from global_packages.value_parsing.primitive_parser import parse_string, parse_integer
 
 
 SHAPE_REQUIRED_COLUMNS = [

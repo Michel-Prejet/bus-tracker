@@ -10,8 +10,8 @@ from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
 from gtfs.parsing.validation.attribute_validator import assert_nonnegative
 from gtfs.parsing.validation.collection_validator import validate_stop_visits
 from gtfs.parsing.validation.instance_validator import assert_not_greater_than
-from gtfs.parsing.value_parsing.datetime_parser import parse_time
-from gtfs.parsing.value_parsing.primitive_parser import parse_string, parse_integer
+from global_packages.value_parsing.datetime_parser import parse_time
+from global_packages.value_parsing.primitive_parser import parse_string, parse_integer
 
 
 STOP_VISIT_REQUIRED_COLUMNS = [

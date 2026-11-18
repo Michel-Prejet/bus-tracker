@@ -1,5 +1,5 @@
 from math import isfinite
-from gtfs.exceptions.value_parsing_error import ValueParsingError
+from global_packages.exceptions.value_parsing_error import ValueParsingError
 
 
 def parse_string(raw: str) -> str:
@@ -47,14 +47,14 @@ def parse_float(raw: str) -> float:
 
 def parse_bool(raw: str) -> bool:
     """
-    Returns False if the given string is "0", True if it is "1", and throws
-    an exception otherwise.
+    Returns False if the given string is "0" or "false", True if it is "1" or
+    "true", and throws an exception otherwise.
     """
-    raw = raw.strip()
+    raw = raw.strip().lower()
 
-    if raw == "0":
+    if raw == "0" or raw == "false":
         return False
-    if raw == "1":
+    if raw == "1" or raw == "true":
         return True
 
     raise ValueParsingError

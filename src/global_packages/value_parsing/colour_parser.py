@@ -1,7 +1,7 @@
+from global_packages.exceptions.value_parsing_error import ValueParsingError
+from global_packages.utilities.is_hex import is_hex
 from gtfs.constants.gtfs_constants import HEX_COLOUR_LENGTH
 from gtfs.domain.values.colour import Colour
-from gtfs.exceptions.value_parsing_error import ValueParsingError
-from utilities.is_hex import is_hex
 
 
 def parse_colour(raw: str) -> Colour:

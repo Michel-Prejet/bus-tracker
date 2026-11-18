@@ -1,7 +1,7 @@
 from api.api_constants import MIN_YEAR
 from api.domain.enums.bus_length import BusLength
 from api.domain.enums.propulsion_type import PropulsionType
-from invariant_helper import require_type, require_non_empty_str, require_state
+from global_packages.utilities.invariant_helper import require_type, require_non_empty_str, require_state
 
 
 class Bus:

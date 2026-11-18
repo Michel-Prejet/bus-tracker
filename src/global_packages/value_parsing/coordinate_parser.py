@@ -1,6 +1,6 @@
+from global_packages.value_parsing.primitive_parser import parse_float
 from gtfs.constants.gtfs_constants import MIN_LATITUDE, MAX_LATITUDE, MIN_LONGITUDE, MAX_LONGITUDE
-from gtfs.exceptions.value_parsing_error import ValueParsingError
-from gtfs.parsing.value_parsing.primitive_parser import parse_float
+from global_packages.exceptions.value_parsing_error import ValueParsingError
 
 
 def parse_latitude(raw: str) -> float:

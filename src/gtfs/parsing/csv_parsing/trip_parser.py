@@ -10,9 +10,9 @@ from gtfs.domain.shape.shape import Shape
 from gtfs.domain.trip.trip import Trip
 from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
 from gtfs.parsing.validation.collection_validator import validate_trips
-from gtfs.parsing.value_parsing.direction_parser import parse_direction_id
-from gtfs.parsing.value_parsing.primitive_parser import parse_string
-from gtfs.parsing.value_parsing.wpg_block_id_parser import parse_winnipeg_block_id
+from global_packages.value_parsing.direction_parser import parse_direction_id
+from global_packages.value_parsing.primitive_parser import parse_string
+from global_packages.value_parsing.wpg_block_id_parser import parse_winnipeg_block_id
 
 
 TRIPS_REQUIRED_COLUMNS = [

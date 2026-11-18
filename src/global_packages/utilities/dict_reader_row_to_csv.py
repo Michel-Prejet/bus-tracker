@@ -1,6 +1,6 @@
 import csv
 import io
-from invariant_helper import require_not_none
+from global_packages.utilities.invariant_helper import require_not_none
 
 
 def dict_reader_row_to_csv(row: dict[str | None, str]) -> str:

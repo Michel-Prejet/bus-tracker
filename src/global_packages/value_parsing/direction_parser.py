@@ -1,6 +1,6 @@
 from gtfs.constants.gtfs_constants import TRIP_DIRECTION_VALUES
-from gtfs.exceptions.value_parsing_error import ValueParsingError
-from gtfs.parsing.value_parsing.primitive_parser import parse_integer
+from global_packages.exceptions.value_parsing_error import ValueParsingError
+from global_packages.value_parsing.primitive_parser import parse_integer
 
 
 def parse_direction_id(raw: str) -> int:

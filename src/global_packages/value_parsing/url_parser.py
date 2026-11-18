@@ -1,6 +1,6 @@
 import validators
+from global_packages.exceptions.value_parsing_error import ValueParsingError
 from gtfs.domain.values.url import Url
-from gtfs.exceptions.value_parsing_error import ValueParsingError
 
 
 def parse_url(raw: str) -> Url:

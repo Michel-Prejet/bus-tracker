@@ -1,4 +1,6 @@
 import psycopg
+from api.exceptions.api_response_attribute_error import APIResponseAttributeError, MissingAPIResponseAttributeError, \
+    MalformedAPIResponseAttributeError
 from gtfs.exceptions.gtfs_collection_error import GTFSCollectionError
 from gtfs.exceptions.gtfs_file_error import GTFSFileError, GTFSFileNotFoundError, EmptyGTFSFileError, \
     MissingGTFSTokenError, MissingGTFSFileColumnError, DuplicateGTFSFileColumnError, GTFSFileColumnError
@@ -25,6 +27,8 @@ def get_err_msg(e: Exception) -> str:
             )
         case psycopg.Error():
             return _get_err_msg_for_db_write_error(e)
+        case APIResponseAttributeError():
+            return _get_err_msg_for_api_response_attribute_error(e)
 
     return f"An unexpected error occurred ({type(e).__name__}): {e}"
 
@@ -79,5 +83,27 @@ def _get_err_msg_for_db_write_error(e: psycopg.Error) -> str:
             return f"Database SQL error: {e}"
         case psycopg.DatabaseError():
             return f"Database error: {e}"
-        case psycopg.Error():
-            return f"PostgreSQL client error: {e}"
+
+    return f"PostgreSQL client error: {e}"
+
+def _get_err_msg_for_api_response_attribute_error(e: APIResponseAttributeError) -> str:
+    match e:
+        case MissingAPIResponseAttributeError():
+            return (
+                f"Could not finish parsing API response from "
+                f"'{e.api_resource_name}' because the attribute "
+                f"'{e.attribute_name}' was missing."
+            )
+        case MalformedAPIResponseAttributeError():
+            return (
+                f"Could not finish parsing API response from "
+                f"'{e.api_resource_name}' because the value "
+                f"'{e.invalid_token}' provided for the attribute "
+                f"'{e.attribute_name}' is invalid."
+            )
+
+    return (
+        f"Could finish parsing API response from '{e.api_resource_name}' "
+        f"due to an unspecified error with the attribute "
+        f"'{e.attribute_name}'."
+    )

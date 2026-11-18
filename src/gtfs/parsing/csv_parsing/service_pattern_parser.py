@@ -7,10 +7,10 @@ from gtfs.domain.values.date_range import DateRange
 from gtfs.parsing.helpers.gtfs_file_parser import parse_gtfs_file
 from gtfs.domain.service_pattern.service_pattern import ServicePattern
 from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
-from gtfs.parsing.validation.instance_validator import assert_not_greater_than
-from gtfs.parsing.value_parsing.datetime_parser import parse_date
-from gtfs.parsing.value_parsing.primitive_parser import parse_string, parse_bool
 from gtfs.parsing.validation.collection_validator import validate_service_patterns
+from gtfs.parsing.validation.instance_validator import assert_not_greater_than
+from global_packages.value_parsing.datetime_parser import parse_date
+from global_packages.value_parsing.primitive_parser import parse_string, parse_bool
 
 
 SERVICE_PATTERN_REQUIRED_COLUMNS = [

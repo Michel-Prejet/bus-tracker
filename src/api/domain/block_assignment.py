@@ -3,7 +3,7 @@ from api.domain.bus import Bus
 from api.domain.bus_observation import BusObservation
 from api.domain.enums.block_assignment_status import BlockAssignmentStatus
 from gtfs.domain.values.winnipeg_block_id import WinnipegBlockID
-from invariant_helper import require_type, require_state
+from global_packages.utilities.invariant_helper import require_type, require_state
 
 
 class BlockAssignment:

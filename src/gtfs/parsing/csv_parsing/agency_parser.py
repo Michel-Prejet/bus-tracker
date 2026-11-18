@@ -1,12 +1,12 @@
+from global_packages.value_parsing.primitive_parser import parse_string
+from global_packages.value_parsing.timezone_parser import parse_timezone
+from global_packages.value_parsing.url_parser import parse_url
 from gtfs.constants.csv_column_headers.agency_headers import AGENCY_NAME_COL_HEADER, AGENCY_URL_COL_HEADER, \
     AGENCY_TIMEZONE_COL_HEADER
 from gtfs.constants.gtfs_constants import AGENCY_FILE_NAME
 from gtfs.parsing.helpers.gtfs_file_parser import parse_gtfs_file
 from gtfs.domain.agency import Agency
 from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
-from gtfs.parsing.value_parsing.primitive_parser import parse_string
-from gtfs.parsing.value_parsing.timezone_parser import parse_timezone
-from gtfs.parsing.value_parsing.url_parser import parse_url
 from gtfs.parsing.validation.collection_validator import validate_agencies
 
 

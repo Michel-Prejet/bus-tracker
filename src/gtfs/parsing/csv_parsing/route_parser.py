@@ -7,10 +7,10 @@ from gtfs.parsing.helpers.row_parsing_factory import RowParsingFactory
 from gtfs.parsing.validation.attribute_validator import assert_nonnegative
 from gtfs.parsing.validation.collection_validator import validate_routes
 from gtfs.parsing.validation.instance_validator import assert_at_least_one_not_none
-from gtfs.parsing.value_parsing.colour_parser import parse_colour
-from gtfs.parsing.value_parsing.enum_parser import parse_route_type
-from gtfs.parsing.value_parsing.primitive_parser import parse_integer, parse_string
-from gtfs.parsing.value_parsing.url_parser import parse_url
+from global_packages.value_parsing.colour_parser import parse_colour
+from global_packages.value_parsing.enum_parser import parse_route_type
+from global_packages.value_parsing.primitive_parser import parse_integer, parse_string
+from global_packages.value_parsing.url_parser import parse_url
 from gtfs.domain.route import Route
 
 

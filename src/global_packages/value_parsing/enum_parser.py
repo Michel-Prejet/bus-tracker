@@ -1,7 +1,7 @@
+from global_packages.exceptions.value_parsing_error import ValueParsingError
+from global_packages.value_parsing.primitive_parser import parse_integer
 from gtfs.domain.enums.route_types import RouteType
 from gtfs.domain.enums.service_pattern_override_type import ServicePatternOverrideType
-from gtfs.exceptions.value_parsing_error import ValueParsingError
-from gtfs.parsing.value_parsing.primitive_parser import parse_integer
 
 
 def parse_route_type(raw: str) -> RouteType:

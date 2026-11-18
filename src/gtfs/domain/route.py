@@ -1,7 +1,7 @@
 from gtfs.domain.enums.route_types import RouteType
 from gtfs.domain.values.colour import Colour
 from gtfs.domain.values.url import Url
-from invariant_helper import require_state, require_non_empty_str, require_type
+from global_packages.utilities.invariant_helper import require_state, require_non_empty_str, require_type
 
 
 DEFAULT_ROUTE_BACKGROUND_COLOUR = Colour("FFFFFF")

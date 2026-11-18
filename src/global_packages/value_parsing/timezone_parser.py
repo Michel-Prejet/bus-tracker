@@ -1,5 +1,5 @@
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-from gtfs.exceptions.value_parsing_error import ValueParsingError
+from global_packages.exceptions.value_parsing_error import ValueParsingError
 
 
 def parse_timezone(raw: str) -> ZoneInfo:

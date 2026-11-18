@@ -1,5 +1,5 @@
 from datetime import date
-from invariant_helper import require_state, require_type
+from global_packages.utilities.invariant_helper import require_state, require_type
 
 
 class DateRange:

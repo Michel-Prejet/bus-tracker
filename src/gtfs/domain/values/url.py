@@ -1,5 +1,5 @@
 import validators
-from invariant_helper import require_state, require_type
+from global_packages.utilities.invariant_helper import require_type, require_state
 
 
 class Url:

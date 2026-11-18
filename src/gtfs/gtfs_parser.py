@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from database_connection import connection
+from global_packages.database_connection import connection
 from gtfs.constants.gtfs_constants import ROUTES_FILE_NAME, STOPS_FILE_NAME, AGENCY_FILE_NAME, FEED_INFO_FILE_NAME, \
     SERVICE_PATTERNS_FILE_NAME, SERVICE_PATTERN_OVERRIDES_FILE_NAME, SHAPES_FILE_NAME, TRIPS_FILE_NAME, \
     STOP_VISITS_FILE_NAME

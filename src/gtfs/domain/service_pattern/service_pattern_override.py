@@ -1,6 +1,6 @@
 from datetime import date
 from gtfs.domain.enums.service_pattern_override_type import ServicePatternOverrideType
-from invariant_helper import require_type
+from global_packages.utilities.invariant_helper import require_type
 
 
 class ServicePatternOverride:

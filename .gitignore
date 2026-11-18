@@ -11,3 +11,6 @@ __pycache__/
 .env
 gtfs_archives/
 databases/
+
+to_do.md
+src/main.py

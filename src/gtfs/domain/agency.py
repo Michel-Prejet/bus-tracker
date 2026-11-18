@@ -1,6 +1,6 @@
 from zoneinfo import ZoneInfo
 from gtfs.domain.values.url import Url
-from invariant_helper import require_not_none, require_non_empty_str, require_type
+from global_packages.utilities.invariant_helper import require_not_none, require_non_empty_str, require_type
 
 
 class Agency:

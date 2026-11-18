@@ -1,7 +1,5 @@
-from api.domain.bus import Bus
-from gtfs.domain.stop import Stop
 from gtfs.domain.values.gtfs_timestamp import GTFSTimestamp
-from invariant_helper import require_type, require_non_empty_str, require_state
+from global_packages.utilities.invariant_helper import require_type, require_non_empty_str, require_state
 
 
 class BusObservation:
@@ -12,9 +10,10 @@ class BusObservation:
 
     def __init__(
         self,
-        bus: Bus,
-        stop: Stop,
+        bus_tracking_num: str,
+        stop_id: str,
         trip_key: str,
+        route_id: str,
         query_time: GTFSTimestamp,
         scheduled_arrival: GTFSTimestamp | None,
         estimated_arrival: GTFSTimestamp | None,
@@ -23,9 +22,10 @@ class BusObservation:
         cancelled: bool | None,
         bike_rack: bool | None
     ):
-        self._bus = bus
-        self._stop = stop
+        self._bus_tracking_num = bus_tracking_num
+        self._stop_id = stop_id
         self._trip_key = trip_key
+        self._route_id = route_id
         self._scheduled_arrival = scheduled_arrival
         self._estimated_arrival = estimated_arrival
         self._scheduled_departure = scheduled_departure
@@ -37,16 +37,20 @@ class BusObservation:
         self._check_bus_observation()
 
     @property
-    def bus(self) -> Bus:
-        return self._bus
+    def bus_tracking_num(self) -> str:
+        return self._bus_tracking_num
 
     @property
-    def stop(self) -> Stop:
-        return self._stop
+    def stop_id(self) -> str:
+        return self._stop_id
 
     @property
     def trip_key(self) -> str:
         return self._trip_key
+
+    @property
+    def route_id(self) -> str:
+        return self._route_id
 
     @property
     def query_time(self) -> GTFSTimestamp:
@@ -77,9 +81,13 @@ class BusObservation:
         return self._bike_rack
 
     def _check_bus_observation(self) -> None:
-        require_type(Bus, bus=self._bus)
-        require_type(Stop, stop=self._stop)
-        require_type(str, trip_key=self._trip_key)
+        require_type(
+            str,
+            bus_tracking_num=self._bus_tracking_num,
+            stop_id=self._stop_id,
+            trip_key=self._trip_key,
+            route_id=self._route_id
+        )
         require_type(GTFSTimestamp, query_time=self._query_time)
         require_type(
             GTFSTimestamp | None,
@@ -94,7 +102,12 @@ class BusObservation:
             bike_rack_status=self._bike_rack
         )
 
-        require_non_empty_str(trip_key=self._trip_key)
+        require_non_empty_str(
+            bus_tracking_num=self._bus_tracking_num,
+            stop_id=self._stop_id,
+            trip_key=self._trip_key,
+            route_id=self._route_id
+        )
 
         require_state(
             self._scheduled_arrival is not None or self._scheduled_departure is not None,

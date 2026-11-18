@@ -1,6 +1,6 @@
 from datetime import date, timedelta, datetime, timezone, time
 from zoneinfo import ZoneInfo
-from invariant_helper import require_not_none, require_state
+from global_packages.utilities.invariant_helper import require_not_none, require_state
 
 
 """
