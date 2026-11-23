@@ -5,8 +5,8 @@ from global_packages.utilities.invariant_helper import require_type, require_sta
 
 class BusObservation:
     """
-    Detailed information for a live stop visit scheduled for a specific bus,
-    read from the Winnipeg Transit API.
+    Detailed, raw information for a live stop visit scheduled for a specific
+    bus, read directly from the Winnipeg Transit API.
     """
 
     def __init__(
