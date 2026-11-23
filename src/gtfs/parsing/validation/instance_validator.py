@@ -1,4 +1,4 @@
-from gtfs.exceptions.domain_error import DomainError
+from global_packages.exceptions.domain_error import DomainError
 
 
 def assert_at_least_one_not_none(value1: str | None, value2: str | None) -> None:

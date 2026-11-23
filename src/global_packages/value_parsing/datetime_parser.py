@@ -56,16 +56,15 @@ def parse_time(raw: str) -> timedelta:
     except OverflowError as e:
         raise ValueParsingError from e
 
-def parse_iso_time_as_gtfs_timestamp(
+def parse_time_as_offset(
         raw: str,
         service_date: date,
         timezone: ZoneInfo
-) -> GTFSTimestamp:
+) -> timedelta:
     """
-    Throws an exception if the given string is not a valid ISO 8601 datetime
-    (YYYY-MM-DDTHH:MM:SS format); otherwise returns a GTFSTimestamp with the
-    given service date and an offset calculated from that service date in the
-    given timezone.
+    Throws an exception if the given string is not a valid ISO 8601 datetime;
+    otherwise returns a timedelta representing an offset calculated from the
+    given service date in the given timezone.
     """
     raw = raw.strip()
 
@@ -86,7 +85,4 @@ def parse_iso_time_as_gtfs_timestamp(
     if offset < timedelta(0):
         raise ValueParsingError
 
-    return GTFSTimestamp(
-        service_date,
-        offset
-    )
+    return offset

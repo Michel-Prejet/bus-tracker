@@ -3,7 +3,7 @@ from typing import Callable
 from global_packages.exceptions.value_parsing_error import ValueParsingError
 from global_packages.utilities.dict_reader_row_to_csv import dict_reader_row_to_csv
 from gtfs.exceptions.gtfs_row_error import GTFSAttributeError, GTFSInstanceError, GTFSForeignKeyError
-from gtfs.exceptions.domain_error import DomainError
+from global_packages.exceptions.domain_error import DomainError
 
 
 class RowParsingFactory:

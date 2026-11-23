@@ -1,4 +1,4 @@
-from gtfs.exceptions.domain_error import DomainError
+from global_packages.exceptions.domain_error import DomainError
 
 
 def assert_nonnegative(value: int) -> None:
