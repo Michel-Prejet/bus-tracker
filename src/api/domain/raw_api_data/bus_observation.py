@@ -13,7 +13,7 @@ class BusObservation:
         self,
         stop_visit: LiveStopVisit,
         service_date: date,
-        bus_tracking_num: str,
+        bus_tracking_num: str | None,
         trip_key: str,
         route_id: str,
         cancelled: bool | None,
@@ -56,7 +56,7 @@ class BusObservation:
         return self._service_date
 
     @property
-    def bus_tracking_num(self) -> str:
+    def bus_tracking_num(self) -> str | None:
         return self._bus_tracking_num
 
     @property
@@ -83,7 +83,7 @@ class BusObservation:
         require_type(LiveStopVisit, live_stop_visit=self._stop_visit)
         require_type(date, service_date=self._service_date)
         require_type(
-            str,
+            str | None,
             bus_tracking_number=self._bus_tracking_num,
             trip_key=self._trip_key,
             route_id=self._route_id
@@ -95,8 +95,10 @@ class BusObservation:
         )
         require_type(timedelta, query_time=self._query_time)
 
+        if self._bus_tracking_num is not None:
+            require_non_empty_str(bus_tracking_number=self._bus_tracking_num)
+
         require_non_empty_str(
-            bus_tracking_number=self._bus_tracking_num,
             trip_key=self._trip_key,
             route_id=self._route_id
         )

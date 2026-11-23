@@ -11,9 +11,11 @@ class LiveTrip:
 
     def __init__(self, trip_key: str, stop_visits: list[LiveStopVisit]):
         self._trip_key = trip_key
-        self._stop_visits = stop_visits.copy()
+        self._stop_visits = stop_visits
 
         self._check_live_trip()
+
+        self._stop_visits = self._stop_visits.copy()
 
     @property
     def trip_key(self) -> str:

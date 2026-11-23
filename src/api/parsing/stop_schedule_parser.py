@@ -21,7 +21,6 @@ def parse_api_stop_schedule(
     Winnipeg Transit API stop schedule, then returns the results in a list.
     Tokens are validated and exceptions are thrown if any required data is
     missing, or if any token is invalid.
-    Any observation in which bus information is missing is silently ignored.
     """
     observations: list[BusObservation] = []
 
@@ -93,17 +92,19 @@ def _parse_scheduled_stop(
     )
 
     bus_info_parser = parser.next("bus", optional=True)
-    if bus_info_parser is None:
-        return None
 
-    bus_tracking_num = bus_info_parser.get("key", expected_type=int)
+    if bus_info_parser is not None:
+        bus_tracking_num = bus_info_parser.get("key", expected_type=int, optional=True)
 
-    bike_rack = parser.next("bus").get(
-        "bike-rack",
-        expected_type=str,
-        parser=parse_bool,
-        optional=True
-    )
+        bike_rack = bus_info_parser.get(
+            "bike-rack",
+            expected_type=str,
+            parser=parse_bool,
+            optional=True
+        )
+    else:
+        bus_tracking_num = None
+        bike_rack = None
 
     times = parse_times(
         parser.next("times"),
@@ -116,7 +117,7 @@ def _parse_scheduled_stop(
             times=times
         ),
         service_date=service_date,
-        bus_tracking_num=str(bus_tracking_num),
+        bus_tracking_num=str(bus_tracking_num) if bus_tracking_num else None,
         trip_key=str(trip_key),
         route_id=str(route_id),
         cancelled=cancelled,
