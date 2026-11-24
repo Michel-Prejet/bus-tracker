@@ -1,8 +1,8 @@
 from pathlib import Path
-from database_connection import connection
+from global_packages.database_connection import connection
 
 
-DDL_FILE = (Path(__file__).resolve().parent.parent.parent.parent
+DDL_FILE = (Path(__file__).resolve().parent.parent.parent.parent.parent
             / "databases" / "create_tables_gtfs.ddl")
 
 def initialize_gtfs_schema() -> None:
