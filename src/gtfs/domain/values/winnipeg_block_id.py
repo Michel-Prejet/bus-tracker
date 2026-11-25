@@ -1,6 +1,6 @@
 from gtfs.constants.gtfs_constants import WPG_BLOCK_ID_TOKEN_DELIMITER, WPG_BLOCK_ID_NUM_TOKENS, WPG_BLOCK_ID_SERVICE_ID_TOKEN_INDEX, \
     WPG_BLOCK_ID_ROUTE_FAMILY_TOKEN_INDEX, WPG_BLOCK_ID_NUMBER_TOKEN_INDEX
-from global_packages.utilities.invariant_helper import require_not_none, require_state, require_non_empty_str, require_type
+from global_packages.utilities.invariant_helper import require_state, require_non_empty_str, require_type
 
 
 class WinnipegBlockID:
@@ -13,7 +13,7 @@ class WinnipegBlockID:
     """
 
     def __init__(self, block_id: str):
-        require_not_none(block_id=block_id)
+        require_type(str, block_id=block_id)
 
         tokens = block_id.split(WPG_BLOCK_ID_TOKEN_DELIMITER)
         require_state(
@@ -27,6 +27,13 @@ class WinnipegBlockID:
         self._number = tokens[WPG_BLOCK_ID_NUMBER_TOKEN_INDEX]
 
         self._check_winnipeg_block_id()
+
+    def __hash__(self) -> int:
+        return hash(
+            (self._service_id,
+            self._route_family,
+            self._number)
+        )
 
     def __eq__(self, other) -> bool:
         """

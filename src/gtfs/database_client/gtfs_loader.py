@@ -9,14 +9,16 @@ class GTFSLoader(ABC):
     """
 
     @abstractmethod
-    def get_blocks_from_observation(
+    def get_possible_block_ids(
             self,
-            stop_id: str,
             service_id: str,
-            scheduled_departure: timedelta
+            stop_id: str,
+            scheduled_arrival: timedelta | None,
+            scheduled_departure: timedelta | None
     ) -> list[WinnipegBlockID]:
         """
         Returns the blocks in which a stop visit occurs matching the given
-        stop ID, service pattern ID, and scheduled departure time.
+        stop ID, service pattern ID, and scheduled arrival/departure times.
+        Null times are not considered.
         """
         pass
